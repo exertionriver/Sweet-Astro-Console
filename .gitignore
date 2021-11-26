@@ -1,0 +1,11 @@
+/.gradle/**
+/.idea/**
+/build/**
+/ephe/**
+/swe_2.09.03/**
+/AstroSWE/cmake-build-debug/**
+/AstroSWE/.idea/**
+/kotlin-native-samples-1.0.1/**
+*.hprof
+/notes/**
+/.git_old/**

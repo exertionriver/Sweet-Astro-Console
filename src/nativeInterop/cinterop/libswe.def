@@ -1,0 +1,4 @@
+headers = swephexp.h
+package = libswe
+compilerOpts = -I/usr/local/swe/swe_2.10.02/src
+linkerOpts = -L -ldl -lm "/usr/local/swe/swe_2.10.02/src/libswe.so"
