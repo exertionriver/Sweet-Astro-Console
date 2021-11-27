@@ -14,9 +14,6 @@ object ConsoleEntryState {
 
     fun EntryState.getNextState(input: Int) = this.getState(input)
 
-//    fun EntryState.getCurEntryProfile(prevCurProfile: Profile) = this.getCurEntryProfile(prevCurProfile)
-//    fun getSynEntryProfileIdx(prevSynProfileIdx : Int) = this.getSynEntryProfileIdx(prevSynProfileIdx)
-
     fun EntryState.getState(input: Int): EntryState {
 
         return when (input) {

@@ -31,49 +31,6 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
         return returnList.filter { it.getBaseAspect().aspectAngle != AspectAngle.ASPECT_ANGLE_NONE }.sortedBy { it.getBaseAspect().aspectCelestialSecond.ordinal }.sortedBy { it.getBaseAspect().aspectCelestialFirst.ordinal }
     }
 
-    /*
-    fun getChartValue() : AspectValue {
-
-        var positiveSum = 0
-        var negativeSum = 0
-
-        for(aspect in aspectsArray) {
-
-            when (analysisState) {
-                AnalysisStates.ROMANTIC_ANALYSIS -> {
-                    positiveSum += aspect.romanticValue.positive
-                    negativeSum += aspect.romanticValue.negative
-                }
-                else -> {
-                    if(aspect.aspectCelestialFirst.isExtendedAspect() || aspect.aspectCelestialSecond.isExtendedAspect())
-                        continue
-
-                    positiveSum += aspect.aspectValue.positive
-                    negativeSum += aspect.aspectValue.negative
-                }
-            }
-        }
-
-        return AspectValue(positiveSum, negativeSum)
-    }
-*/
-    /*
-    fun getRomanticModifier() : Int {
-
-        var positiveSum = 0
-
-        for(row in chartRows) {
-            for(valAspect in row) {
-
-            }
-            if (aspect.romanticModifier > 0) positiveSum += aspect.romanticModifier
-            if (aspect.romanticModifier < 0) negativeSum += aspect.romanticModifier
-        }
-
-        return AspectValue(positiveSum, negativeSum)
-    }
-
-     */
     companion object {
 
         fun getEmptyChart() = ValueChart(arrayOf(ValueAspect.getEmptyAspect()) )

@@ -51,7 +51,7 @@ object RenderDetails {
                 if (dataIdxMax > dataIdxFirstCol) {
                     snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value, "%s", getTopFirstColBorderShape())
                     } else {
-                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth * 3, "")
+                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth, "")
                     }
             }
             else -> {
@@ -67,7 +67,7 @@ object RenderDetails {
                         snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth - 1, "")
                     } //else summary lines formatting
                 } else {
-                    snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s",detailsColumnWidth * 4, "")
+                    snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth, "")
                 }
             }
         }
@@ -99,12 +99,11 @@ object RenderDetails {
                     snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s%s", detailsColumnWidth - getTopFirstColBorderShapeLength(), "", getTopAddlColBordersShape())
 
                 } else {
-                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s", detailsColumnWidth * 3, "")
+                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s", detailsColumnWidth, "")
                 }
             }
             else -> {
                 if (dataIdxMax >= dataIdxFirstCol) {
-
                     if (dataIdxMax >= dataIdxSecondCol) {
                         val secondColumnAspect = curChart.getValueAspects()[dataIdxSecondCol]
                         val secondColumnData = secondColBorder + " " + dataIdxSecondCol.toString() + ":" + RenderAspect(secondColumnAspect).getRenderLabel()
@@ -112,8 +111,10 @@ object RenderDetails {
                         snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%s", secondColumnData)
 
                     } else {
-                        snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",detailsColumnWidth * 3, "")
+                        snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",detailsColumnWidth, "")
                     }
+                } else {
+                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",detailsColumnWidth, "")
                 }
            }
         }
@@ -151,16 +152,24 @@ object RenderDetails {
             }
             else -> {
                 if (dataIdxMax >= dataIdxFirstCol) {
-                    if (dataIdxMax >= dataIdxThirdCol) {
-                        val thirdColumnAspect = curChart.getValueAspects()[dataIdxThirdCol]
-                        val thirdColumnData = thirdColBorder + " " + dataIdxThirdCol.toString() + ":" + RenderAspect(thirdColumnAspect).getRenderLabel()
+                    if (dataIdxMax >= dataIdxSecondCol) {
+                        if (dataIdxMax >= dataIdxThirdCol) {
+                            val thirdColumnAspect = curChart.getValueAspects()[dataIdxThirdCol]
+                            val thirdColumnData = thirdColBorder + " " + dataIdxThirdCol.toString() + ":" + RenderAspect(thirdColumnAspect).getRenderLabel()
 
-                        snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%s%*s"
-                            , thirdColumnData, detailsColumnWidth, "")
+                            snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%s%*s"
+                                , thirdColumnData, detailsColumnWidth, "")
+                        } else {
+                            //width plus label plus column space
+                            snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
+                        }
                     } else {
                         //width plus label plus column space
                         snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
                     }
+                } else {
+                    //width plus label plus column space
+                    snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
                 }
             }
         }
