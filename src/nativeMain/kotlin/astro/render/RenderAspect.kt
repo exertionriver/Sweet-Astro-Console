@@ -8,21 +8,21 @@ import kotlin.math.abs
 
 data class RenderAspect(val valueAspect : ValueAspect) {
 
-    val baseAspect = valueAspect.getBaseAspect()
+    val stateAspect = valueAspect.stateAspect
 
     fun getAspectRenderLabel() = when {
         (valueAspect.analysisState == AnalysisState.NO_ANALYSIS) -> when {
-            (valueAspect.getPositiveBaseValue() > 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
-            (valueAspect.getNegativeBaseValue() < 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
-            else -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
+            (valueAspect.getPositiveBaseValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
+            (valueAspect.getNegativeBaseValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
+            else -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
         }
         else -> when { //analysis state
-            (valueAspect.getPositiveBaseValue() > 0) && (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
-            (valueAspect.getNegativeBaseValue() < 0) && (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
-            (valueAspect.getBaseValue().getNet() != 0) && (valueAspect.getBaseValue().getNet() == 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
-            (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
-            (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
-            else -> RenderAspectType.fromName(valueAspect.getBaseAspect().aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
+            (valueAspect.getPositiveBaseValue() > 0) && (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
+            (valueAspect.getNegativeBaseValue() < 0) && (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
+            (valueAspect.getBaseValue().getNet() != 0) && (valueAspect.getBaseValue().getNet() == 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
+            (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
+            (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
+            else -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
         }
     }
 
@@ -44,14 +44,14 @@ data class RenderAspect(val valueAspect : ValueAspect) {
 
     fun getRenderLabel() : String {
 
-        val firstAspectSpace = if (baseAspect.aspectCelestialFirst != AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) LABEL_SPACE else ""
-        val secondAspectSpace = if (baseAspect.aspectCelestialSecond != AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) LABEL_SPACE else ""
+        val firstAspectSpace = if (stateAspect.aspectCelestialFirst != AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) LABEL_SPACE else ""
+        val secondAspectSpace = if (stateAspect.aspectCelestialSecond != AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) LABEL_SPACE else ""
 
-        val commonLabel = RenderSign.getElementLabel(baseAspect.signFirst) + LABEL_SPACE +
-                RenderAspectCelestial.fromName(baseAspect.aspectCelestialFirst.toString())!!.getLabel() + firstAspectSpace +
+        val commonLabel = RenderSign.getElementLabel(stateAspect.signFirst) + LABEL_SPACE +
+                RenderAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getLabel() + firstAspectSpace +
                 getAspectRenderLabel() + LABEL_SPACE +
-                RenderSign.getElementLabel(baseAspect.signSecond) + LABEL_SPACE +
-                RenderAspectCelestial.fromName(baseAspect.aspectCelestialSecond.toString())!!.getLabel() + secondAspectSpace
+                RenderSign.getElementLabel(stateAspect.signSecond) + LABEL_SPACE +
+                RenderAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getLabel() + secondAspectSpace
 
         return if (valueAspect.analysisState == AnalysisState.ROMANTIC_ANALYSIS)
             commonLabel //+ getRomModLabel(analysisState, valueAspect.aspectModifier) +  "=" + getLabel(aspect.aspectValue, AspectValue.NET_VALUE, aspect.romanticModifier)

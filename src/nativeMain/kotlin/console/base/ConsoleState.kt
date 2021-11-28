@@ -1,9 +1,6 @@
 package console.base
 
-import astro.state.ChartState
-import astro.state.EntryState
-import astro.state.NavState
-import astro.state.StateChart
+import astro.state.*
 import astro.value.ValueChart
 import console.render.RenderHandler
 import console.render.RenderConsole
@@ -14,6 +11,7 @@ import console.render.RenderDetails
 import console.state.*
 import console.state.ConsoleAnalysisState.getNextState
 import console.state.ConsoleAspectOverlayState.getNextState
+import console.state.ConsoleAspectOverlayState.getToggledState
 import console.state.ConsoleAspectsState.getNextState
 import console.state.ConsoleChartState.getNextState
 import console.state.ConsoleDetailsState.getNextState
@@ -39,7 +37,7 @@ class ConsoleState {
     var curDetailsState = ConsoleDetailsState.getDefaultState()
     var curAnalysisState = ConsoleAnalysisState.getDefaultState()
 
-    var prevChartState = ConsoleChartState.getDefaultState()
+    //chart render state
     var curChartState = ConsoleChartState.getDefaultState()
     var curAspectOverlayState = ConsoleAspectOverlayState.getDefaultState()
 
@@ -52,17 +50,22 @@ class ConsoleState {
 
     var refSnapshot = curNavProfile.celestialSnapshot
     var synSnapshot = curNavProfile.celestialSnapshot
+    var compSnapshot = curNavProfile.celestialSnapshot
 
     @ExperimentalUnsignedTypes
     var curNavUTCTime : LocalDateTime = curNavProfile.earthLocation.utcDateTime
 
-    private var curChart = ValueChart.getEmptyChart()
-    private var curRefNatalChart = ValueChart.getEmptyChart()
-    private var curSynNatalChart = ValueChart.getEmptyChart()
+    private var curChart = StateChart.getEmptyChart()
+    private var curRefNatalChart = StateChart.getEmptyChart()
+    private var curSynNatalChart = StateChart.getEmptyChart()
 
-    private var prevChart = ValueChart.getEmptyChart()
-    private var prevRefNatalChart = ValueChart.getEmptyChart()
-    private var prevSynNatalChart = ValueChart.getEmptyChart()
+    private var curValueChart = ValueChart.getEmptyChart()
+    private var curRefNatalValueChart = ValueChart.getEmptyChart()
+    private var curSynNatalValueChart = ValueChart.getEmptyChart()
+
+    private var prevChart = StateChart.getEmptyChart()
+    private var prevRefNatalChart = StateChart.getEmptyChart()
+    private var prevSynNatalChart = StateChart.getEmptyChart()
 
     private var input = 0
 
@@ -100,13 +103,13 @@ class ConsoleState {
             //set curNav profile, with synProfile transits (for synastry chart)
             curNavProfile = Profile.getCopyWithDateTimeEntry(profiles[curProfileIdx], curNavUTCTime, profiles[synProfileIdx])
 
+            //re-initialize these to current / navigation snapshot
             refSnapshot = curNavProfile.celestialSnapshot
             synSnapshot = curNavProfile.celestialSnapshot
-
-            curRefNatalChart = ValueChart( StateChart(refSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState), curAnalysisState)
-
             //composite snapshot
-            var compSnapshot = curNavProfile.celestialSnapshot
+            compSnapshot = curNavProfile.celestialSnapshot
+
+            curRefNatalChart = StateChart(refSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState)
 
             //if no second profile is chosen, pause on previous chart
             if ( Profiles.isNoneProfile(synProfileIdx) ) {
@@ -121,8 +124,16 @@ class ConsoleState {
 
                 if (curChartState != ChartState.NATAL_CHART) synSnapshot = profiles[synProfileIdx].celestialSnapshot
 
-                curChart = ValueChart(StateChart(refSnapshot, synSnapshot, curChartState, curAspectsState, curTimeAspectsState, curAspectOverlayState), curAnalysisState)
-                curSynNatalChart = ValueChart(StateChart(synSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState), curAnalysisState)
+                curChart = StateChart(refSnapshot, synSnapshot, curChartState, curAspectsState, curTimeAspectsState, curAspectOverlayState)
+
+                //natal charts need natcomp overlay
+                if (curChartState == ChartState.SYNASTRY_CHART) {
+                    curRefNatalChart = StateChart(refSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState.getToggledState())
+                    curSynNatalChart = StateChart(synSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState.getToggledState())
+                } else {
+                    curSynNatalChart = StateChart(synSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState)
+                }
+
             }
 
             //if composite profile was made, set refSnapshot to that snapshot
@@ -133,10 +144,14 @@ class ConsoleState {
             prevRefNatalChart = curRefNatalChart
             prevSynNatalChart = curSynNatalChart
 
+            curValueChart = ValueChart(curChart, curAnalysisState)
+            curRefNatalValueChart = ValueChart(curRefNatalChart, curAnalysisState)
+            curSynNatalValueChart = ValueChart(curSynNatalChart, curAnalysisState)
+
             RenderConsole.renderHeader(this)
             RenderConsole.renderEarthData(curNavProfile.earthLocation)
-            RenderDetails.renderCelestialsDetailsData(refSnapshot, synSnapshot, curChart, curChartState, curDetailsState, curAnalysisState)
-            RenderDetails.renderHouseAspectDetailsData(refSnapshot, curChart, curRefNatalChart, curSynNatalChart, curChartState, curDetailsState, curAnalysisState)
+            RenderDetails.renderCelestialsDetailsData(refSnapshot, synSnapshot, curValueChart, curChart.chartState, curDetailsState, curAnalysisState)
+            RenderDetails.renderHouseAspectDetailsData(refSnapshot, curValueChart, curRefNatalValueChart, curSynNatalValueChart, curChart.chartState, curDetailsState, curAnalysisState)
 
             //entry state handling
             curNavProfile = curEntryState.getCurEntryProfile(curNavProfile) // return profile copy of current if entry is good, previous if no input or validation fail

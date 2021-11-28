@@ -9,8 +9,6 @@ import kotlin.math.abs
 
 data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) {
 
-    fun getBaseAspect() = stateAspect.getBaseAspect()
-
     fun getBaseValue() = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveBaseValue() / 2, getNegativeBaseValue() / 2) else Value(getPositiveBaseValue(), getNegativeBaseValue() )
     fun getModValue() = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveModValue() / 2, getNegativeModValue() / 2) else Value(getPositiveModValue(), getNegativeModValue())
 
@@ -21,21 +19,21 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
         else -> 0
     }
     fun getSignFirstModifier() = when (analysisState) {
-        AnalysisState.ELEMENT_ANALYSIS -> getElementModifier(getBaseAspect().signFirst.getElement()).toInt()
-        AnalysisState.MODE_ANALYSIS -> getModeModifier(getBaseAspect().signFirst.getMode()).toInt()
+        AnalysisState.ELEMENT_ANALYSIS -> getElementModifier(stateAspect.signFirst.getElement()).toInt()
+        AnalysisState.MODE_ANALYSIS -> getModeModifier(stateAspect.signFirst.getMode()).toInt()
         else -> 0
     }
     fun getSignSecondModifier() = when (analysisState) {
-        AnalysisState.ELEMENT_ANALYSIS -> getElementModifier(getBaseAspect().signSecond.getElement()).toInt()
-        AnalysisState.MODE_ANALYSIS -> getModeModifier(getBaseAspect().signSecond.getMode()).toInt()
+        AnalysisState.ELEMENT_ANALYSIS -> getElementModifier(stateAspect.signSecond.getElement()).toInt()
+        AnalysisState.MODE_ANALYSIS -> getModeModifier(stateAspect.signSecond.getMode()).toInt()
         else -> 0
     }
     fun getAspectCelestialFirstModifier() = when (analysisState) {
-        AnalysisState.PLANET_ANALYSIS -> getCelestialModifier(getBaseAspect().aspectCelestialFirst).toInt()
+        AnalysisState.PLANET_ANALYSIS -> getCelestialModifier(stateAspect.aspectCelestialFirst).toInt()
         else -> 0
     }
     fun getAspectCelestialSecondModifier() = when (analysisState) {
-        AnalysisState.PLANET_ANALYSIS -> getCelestialModifier(getBaseAspect().aspectCelestialSecond).toInt()
+        AnalysisState.PLANET_ANALYSIS -> getCelestialModifier(stateAspect.aspectCelestialSecond).toInt()
         else -> 0
     }
 
@@ -43,43 +41,43 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
         //romMod is stored as 'orb' in baseAspect
         return ValueRomanticAspects.getRomanticAspects().firstOrNull() {
-            (   (   ( (it.aspectCelestialFirst == getBaseAspect().aspectCelestialFirst) && (it.aspectCelestialSecond == getBaseAspect().aspectCelestialSecond) ) ||
-                    ( (it.aspectCelestialFirst == getBaseAspect().aspectCelestialSecond) && (it.aspectCelestialSecond == getBaseAspect().aspectCelestialFirst) ) )
-                    && (it.aspectAngle == getBaseAspect().aspectAngle) )}?.orb?.toInt() ?: 0
+            (   (   ( (it.aspectCelestialFirst == stateAspect.aspectCelestialFirst) && (it.aspectCelestialSecond == stateAspect.aspectCelestialSecond) ) ||
+                    ( (it.aspectCelestialFirst == stateAspect.aspectCelestialSecond) && (it.aspectCelestialSecond == stateAspect.aspectCelestialFirst) ) )
+                    && (it.aspectAngle == stateAspect.aspectAngle) )}?.orb?.toInt() ?: 0
     }
 
     private fun getElementModifier(signElement : SignElement) : Double {
-        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialFirst.toString())!!.getWeight()
-        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialSecond.toString())!!.getWeight()
+        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
+        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getWeight()
         val aspectCelestialBothWeight = aspectCelestialFirstWeight + aspectCelestialSecondWeight
         var returnWeight = 0.0
 
-        if (getBaseAspect().signFirst.getElement() == signElement) returnWeight += aspectCelestialFirstWeight
-        if (getBaseAspect().signSecond.getElement() == signElement) returnWeight += aspectCelestialSecondWeight
+        if (stateAspect.signFirst.getElement() == signElement) returnWeight += aspectCelestialFirstWeight
+        if (stateAspect.signSecond.getElement() == signElement) returnWeight += aspectCelestialSecondWeight
 
         return returnWeight / aspectCelestialBothWeight
     }
 
     private fun getModeModifier(signMode : SignMode) : Double {
-        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialFirst.toString())!!.getWeight()
-        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialSecond.toString())!!.getWeight()
+        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
+        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getWeight()
         val aspectCelestialBothWeight = aspectCelestialFirstWeight + aspectCelestialSecondWeight
         var returnWeight = 0.0
 
-        if (getBaseAspect().signFirst.getMode() == signMode) returnWeight += aspectCelestialFirstWeight
-        if (getBaseAspect().signSecond.getMode() == signMode) returnWeight += aspectCelestialSecondWeight
+        if (stateAspect.signFirst.getMode() == signMode) returnWeight += aspectCelestialFirstWeight
+        if (stateAspect.signSecond.getMode() == signMode) returnWeight += aspectCelestialSecondWeight
 
         return returnWeight / aspectCelestialBothWeight
     }
 
     private fun getCelestialModifier(aspectCelestial: AspectCelestial) : Double {
-        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialFirst.toString())!!.getWeight()
-        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialSecond.toString())!!.getWeight()
+        val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
+        val aspectCelestialSecondWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getWeight()
         val aspectCelestialBothWeight = aspectCelestialFirstWeight + aspectCelestialSecondWeight
         var returnWeight = 0.0
 
-        if (getBaseAspect().aspectCelestialFirst == aspectCelestial) returnWeight += aspectCelestialFirstWeight
-        if (getBaseAspect().aspectCelestialSecond == aspectCelestial) returnWeight += aspectCelestialSecondWeight
+        if (stateAspect.aspectCelestialFirst == aspectCelestial) returnWeight += aspectCelestialFirstWeight
+        if (stateAspect.aspectCelestialSecond == aspectCelestial) returnWeight += aspectCelestialSecondWeight
 
         return returnWeight / aspectCelestialBothWeight
     }
@@ -183,14 +181,14 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
     fun getPositiveBaseValue() : Int {
 
         //hard aspects to sun / moon midpoint are positive
-        return if ( (getBaseAspect().aspectCelestialFirst == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT
-                || getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) && (
-                (getBaseAspect().aspectAngle.getAspectType() == AspectType.CONJUNCTION)
-                        || (getBaseAspect().aspectAngle.getAspectType() == AspectType.OPPOSITION)
-                        || (getBaseAspect().aspectAngle.getAspectType() == AspectType.SEMISQUARE)
-                        || (getBaseAspect().aspectAngle.getAspectType() == AspectType.SQUARE) ) )
+        return if ( (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT
+                || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) && (
+                (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION)
+                        || (stateAspect.aspectAngle.getAspectType() == AspectType.OPPOSITION)
+                        || (stateAspect.aspectAngle.getAspectType() == AspectType.SEMISQUARE)
+                        || (stateAspect.aspectAngle.getAspectType() == AspectType.SQUARE) ) )
             getAspectBaseValue()
-        else if (ValueAspectType.fromName(getBaseAspect().aspectAngle.getAspectType().toString())!!.isPositive()) getAspectBaseValue()
+        else if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isPositive()) getAspectBaseValue()
         else 0
     }
 
@@ -200,25 +198,25 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 //      In particular, conjunctions involving the Sun, Venus, and/or Jupiter, in any of the three possible conjunction combinations, are
 //      considered highly favourable, while conjunctions involving the Moon, Mars, and/or Saturn, again in any of the three possible
 //      conjunction combinations, are considered highly unfavourable.
-        return if ( (getBaseAspect().aspectAngle.getAspectType() == AspectType.CONJUNCTION) &&
-                    (getBaseAspect().aspectCelestialFirst == AspectCelestial.ASPECT_MOON && (getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_MARS || getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
-                    || (getBaseAspect().aspectCelestialFirst == AspectCelestial.ASPECT_MARS && (getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_MOON || getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
-                    || (getBaseAspect().aspectCelestialFirst == AspectCelestial.ASPECT_SATURN && (getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_MOON || getBaseAspect().aspectCelestialSecond == AspectCelestial.ASPECT_MARS) ) )
+        return if ( (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION) &&
+                    (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MOON && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
+                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MARS && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
+                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SATURN && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS) ) )
             -getAspectBaseValue()
-        else if (ValueAspectType.fromName(getBaseAspect().aspectAngle.getAspectType().toString())!!.isPositive()) 0
+        else if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isPositive()) 0
         else -getAspectBaseValue()
     }
 
     private fun getAspectBaseValue() : Int {
 
-        if (ValueAspectType.fromName(getBaseAspect().aspectAngle.getAspectType().toString())!!.isNeutral()) return 0
+        if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isNeutral()) return 0
 
-        val weightFirst = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialFirst.toString())!!.getWeight()
-        val weightSecond = ValueAspectCelestial.fromName(getBaseAspect().aspectCelestialSecond.toString())!!.getWeight()
-        val weightAspect = stateAspect.aspectOverlayState.getAspectAngleOrb(getBaseAspect().aspectAngle)
+        val weightFirst = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
+        val weightSecond = ValueAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getWeight()
+        val weightAspect = stateAspect.aspectOverlayState.getAspectAngleOrb(stateAspect.aspectAngle)
 
         //full weightAspect at orb = 0, down to 0 weightAspect at the cusp of the orb
-        val weightOrbAspect = ((60 * weightAspect) - (60 * getBaseAspect().orb)) / (60 * weightAspect);
+        val weightOrbAspect = ((60 * weightAspect) - (60 * stateAspect.orb)) / (60 * weightAspect);
 
 //      debugging with lldb shows rounding error between AstroSWE and SAC -- e.g. aspectWeight for 4.9 in SAC is 4.89999999998 in AstroSWE, leading to rounding diffs
 //        println (" orb)" + orb + ": 1W)" + weightFirst + " 2W)" + weightSecond + " aspectW)" + weightAspect + " orbAspectW)" + weightOrbAspect + " value)" + aspectValue )

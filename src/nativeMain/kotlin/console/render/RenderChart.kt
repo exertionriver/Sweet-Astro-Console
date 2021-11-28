@@ -113,7 +113,7 @@ object RenderChart {
                         val aspectOut = curChart.chartRows[horizontalIdx].rowAspects[verticalIdx]
 //                        println("horizontalIdx:$horizontalIdx verticalIdx:$verticalIdx aspectIdx:" + aspectOut.aspectAngle.getLabel())
 
-                        label += if ((horizontalIdx == verticalIdx) && (AspectType.ASPECT_NONE == aspectOut.getBaseAspect().aspectAngle.getAspectType()))
+                        label += if ((horizontalIdx == verticalIdx) && (AspectType.ASPECT_NONE == aspectOut.stateAspect.aspectAngle.getAspectType()))
                             "${RenderAspect.getAspectNoneMarkerLabel()} "
                         else
                             "${RenderAspect(curChart.chartRows[horizontalIdx].rowAspects[verticalIdx]).getAspectRenderLabel()} "

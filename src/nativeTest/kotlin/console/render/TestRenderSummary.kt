@@ -83,13 +83,19 @@ object TestRenderSummary {
         val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val synChart = ValueChart(StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+
+        println(synChart.getValueAspects().size)
+
+        val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, ChartState.NATAL_CHART,
             AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
 
-        val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+        println(refNatalChart.getValueAspects().size)
+
+        val synNatalChart = ValueChart(StateChart(synProfile.celestialSnapshot, ChartState.NATAL_CHART,
             AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
 
-        val synNatalChart = ValueChart(StateChart(synProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+        println(synNatalChart.getValueAspects().size)
 
         (0..20).forEach { idx ->
             val summaryDataLine = RenderSummary.prepareSummaryData(idx, synChart, refNatalChart, synNatalChart, ChartState.SYNASTRY_CHART)

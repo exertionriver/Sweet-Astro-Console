@@ -28,7 +28,7 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
 
         chartRows.forEach { returnList.addAll( it.rowAspects ) }
 
-        return returnList.filter { it.getBaseAspect().aspectAngle != AspectAngle.ASPECT_ANGLE_NONE }.sortedBy { it.getBaseAspect().aspectCelestialSecond.ordinal }.sortedBy { it.getBaseAspect().aspectCelestialFirst.ordinal }
+        return returnList.filter { it.stateAspect.aspectAngle != AspectAngle.ASPECT_ANGLE_NONE }.sortedBy { it.stateAspect.aspectCelestialSecond.ordinal }.sortedBy { it.stateAspect.aspectCelestialFirst.ordinal }
     }
 
     companion object {
@@ -55,7 +55,7 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
                 for (horizontalAspectCelestial in AspectCelestial.values().filter { it.isChartAspectCelestial() }) {
 
                     val chartAspect = chartAspects.firstOrNull {
-                        (it.getBaseAspect().aspectCelestialFirst == verticalAspectCelestial) && (it.getBaseAspect().aspectCelestialSecond == horizontalAspectCelestial)
+                        (it.stateAspect.aspectCelestialFirst == verticalAspectCelestial) && (it.stateAspect.aspectCelestialSecond == horizontalAspectCelestial)
                     } ?: ValueAspect.getEmptyAspect(verticalAspectCelestial, horizontalAspectCelestial)
 
                     chartRow.add(horizontalAspectCelestial.ordinal, chartAspect)

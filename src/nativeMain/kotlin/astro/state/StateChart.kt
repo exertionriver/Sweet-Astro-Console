@@ -31,7 +31,7 @@ class StateChart (val chartRows: Array<StateChartRow>, val chartState: ChartStat
 
         chartRows.forEach { returnList.addAll( it.rowAspects ) }
 
-        return returnList.filter { it.getBaseAspect().aspectAngle != AspectAngle.ASPECT_ANGLE_NONE }.sortedBy { it.getBaseAspect().aspectCelestialSecond.ordinal }.sortedBy { it.getBaseAspect().aspectCelestialFirst.ordinal }
+        return returnList.filter { it.aspectAngle != AspectAngle.ASPECT_ANGLE_NONE }.sortedBy { it.aspectCelestialSecond.ordinal }.sortedBy { it.aspectCelestialFirst.ordinal }
 
     }
 
@@ -128,7 +128,7 @@ class StateChart (val chartRows: Array<StateChartRow>, val chartState: ChartStat
                         , aspectsState, timeAspectsState, aspectOverlayState
                     )
 
-                if (aspect.getBaseAspect().aspectAngle == extendedAspect.aspectAngle) {
+                if (aspect.aspectAngle == extendedAspect.aspectAngle) {
 
                     returnAspects.add(returnAspectsIdx++, aspect)
                 }
@@ -163,7 +163,7 @@ class StateChart (val chartRows: Array<StateChartRow>, val chartState: ChartStat
                             , aspectsState, timeAspectsState, aspectOverlayState
                         )
 
-                    if (aspect.getBaseAspect().aspectAngle == extendedAspect.aspectAngle) {
+                    if (aspect.aspectAngle == extendedAspect.aspectAngle) {
 
                         returnAspects.add(returnAspectsIdx++, aspect)
                     }

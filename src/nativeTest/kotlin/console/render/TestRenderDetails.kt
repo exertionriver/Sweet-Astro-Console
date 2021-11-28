@@ -11,7 +11,7 @@ object TestRenderDetails {
 
     @Test
     fun testCurDetails() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
             AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
