@@ -7,7 +7,7 @@ import platform.posix.pow
 @Suppress("UNUSED")
 object Constants {
     const val APP_NAME = "SweetAstroConsole"
-    const val APP_VERSION = "0.3.1"
+    const val APP_VERSION = "0.3.2"
 
     //EPHE_PATH works for main code. Created ln -s $EPHE_PATH /users/ephe for test code
     const val EPHE_PATH = "/usr/local/swe/ephe/"
