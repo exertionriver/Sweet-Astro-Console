@@ -15,8 +15,8 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
 
     constructor(stateChart : StateChart, analysisState: AnalysisState) : this (stateChart.getStateAspects().toTypedArray(), stateChart.chartState, analysisState)
 
-    fun getBaseValue() = Value(getValueAspects().map { it.getBaseValue().positive }.reduce { acc, modPositive -> acc + modPositive },
-            getValueAspects().map { it.getBaseValue().negative }.reduce { acc, modNegative -> acc + modNegative } )
+    fun getBaseValue() = Value(getValueAspects().map { it.getBaseValue().positive }.reduce { acc, basePositive -> acc + basePositive },
+            getValueAspects().map { it.getBaseValue().negative }.reduce { acc, baseNegative -> acc + baseNegative } )
 
     fun getModValue() = Value(getValueAspects().map { it.getModValue().positive }.reduce { acc, modPositive -> acc + modPositive },
         getValueAspects().map { it.getModValue().negative }.reduce { acc, modNegative -> acc + modNegative } )
