@@ -28,7 +28,7 @@ object ConsoleEntryState {
             Constants.KEY_PLUS, Constants.KEY_EQUALS -> EntryState.PROFILE_NUMBER_ENTRY
             Constants.KEY_USCORE, Constants.KEY_ESC -> EntryState.NO_ENTRY
 
-            Constants.KEY_x -> getDefaultState()
+            Constants.KEY_x -> EntryState.RESET_DEFAULTS
             else -> this
         }
     }

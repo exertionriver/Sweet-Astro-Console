@@ -60,6 +60,13 @@ object TestConsoleEntryState {
 
         val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
         val outProfile = EntryState.TIME_ENTRY.getCurEntryProfile(refProfile, textEntry)
+        assertEquals(18, refProfile.earthLocation.utcDateTime.hour)
+        assertEquals(39, refProfile.earthLocation.utcDateTime.minute)
+        assertEquals(0, refProfile.earthLocation.utcDateTime.second)
+        assertEquals(18, outProfile.earthLocation.utcDateTime.hour)
+        assertEquals(39, outProfile.earthLocation.utcDateTime.minute)
+        assertEquals(0, outProfile.earthLocation.utcDateTime.second)
+
 
     }
 
@@ -108,11 +115,8 @@ object TestConsoleEntryState {
         val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
         var outProfile = EntryState.TZ_ENTRY.getCurEntryProfile(refProfile, "abcds")
 
-//        assertEquals(getTimeZoneFromOffsetInt(Constants.TZ_CST), refProfile.earthLocation.timeZone)
-//        assertEquals(getTimeZoneFromOffsetInt(-2), outProfile.earthLocation.timeZone)
-
-//        outProfile = EntryState.TZ_ENTRY.getCurEntryProfile(refProfile, "7")
-//        assertEquals(getTimeZoneFromOffsetInt(7), outProfile.earthLocation.timeZone)
+        assertEquals(getTimeZoneFromOffsetInt(Constants.TZ_CST), refProfile.earthLocation.timeZone)
+        assertEquals(getTimeZoneFromOffsetInt(Constants.TZ_CST), outProfile.earthLocation.timeZone)
     }
 
     @OptIn(ExperimentalTime::class)

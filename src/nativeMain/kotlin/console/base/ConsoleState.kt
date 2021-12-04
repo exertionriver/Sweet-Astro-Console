@@ -83,6 +83,17 @@ class ConsoleState {
             curNavState = curNavState.getNextState(input)
             curNavDirState = curNavDirState.getNextState(input)
             curEntryState = curEntryState.getNextState(input)
+
+            //resetting defaults if appropriate
+            if (curEntryState == EntryState.RESET_DEFAULTS) {
+
+                curNavState = ConsoleNavState.getDefaultState()
+                curNavDirState = ConsoleNavDirState.getDefaultState()
+                curEntryState = ConsoleEntryState.getDefaultState()
+
+                curNavProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
+            }
+
             curHelpState = curHelpState.getNextState(input)
             curAspectsState = curAspectsState.getNextState(input)
             curTimeAspectsState = curTimeAspectsState.getNextState(input)

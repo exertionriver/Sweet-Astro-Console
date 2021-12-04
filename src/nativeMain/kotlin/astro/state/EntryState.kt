@@ -15,7 +15,8 @@ enum class EntryState {
     , LONG_ENTRY { override fun getLabel() = "Longitude Entry"; override fun getPrompt() = "(-W)xy.z123 : " }
     , TZ_ENTRY { override fun getLabel() = "Timezone Entry"; override fun getPrompt() = "(-W)hh : " }
     , PROFILE_ENTRY { override fun getLabel() = "Profile Entry"; override fun getPrompt() = "profile name: " }
-    , PROFILE_NUMBER_ENTRY { override fun getLabel() = "Profile Number Entry"; override fun getPrompt() = "profile number: " } ;
+    , PROFILE_NUMBER_ENTRY { override fun getLabel() = "Profile Number Entry"; override fun getPrompt() = "profile number: " }
+    , RESET_DEFAULTS ;
 
     open fun getLabel(): String = ""
     open fun getPrompt(): String = ""

@@ -23,16 +23,16 @@ object TestRenderDetails {
         val detailsSize = refNatalChart.getValueAspects().size
 
         (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
-            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, idx, refNatalChart)
-            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, idx, refNatalChart)
-            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, idx, refNatalChart)
+            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, refNatalChart)
+            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, refNatalChart)
+            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, refNatalChart)
             println(summaryDataLineFirstCol + "|" + summaryDataLineFirstCol.length
                 + summaryDataLineSecondCol + "|" + summaryDataLineSecondCol.length
                 + summaryDataLineThirdCol + "|" + summaryDataLineThirdCol.length)
 
             val renderIdxFirstCol = idx
             val renderIdxSecondCol = renderIdxFirstCol + RenderDetails.detailsFirstColMaxIdx - 1
-            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx + 4
+            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
 
             //to verify size / idx
 /*            println("detailsSize: $detailsSize")
@@ -88,6 +88,28 @@ object TestRenderDetails {
                 }
             }
 */
+        }
+
+    }
+
+    @Test
+    fun testSelectiveCurDetails() {
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+
+        val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_SELECTIVE), AnalysisState.NO_ANALYSIS)
+
+        (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
+            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, refNatalChart)
+            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, refNatalChart)
+            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, refNatalChart)
+            println(summaryDataLineFirstCol + "|" + summaryDataLineFirstCol.length
+                   + summaryDataLineSecondCol + "|" + summaryDataLineSecondCol.length
+                    + summaryDataLineThirdCol + "|" + summaryDataLineThirdCol.length)
+            val renderIdxFirstCol = idx
+            val renderIdxSecondCol = renderIdxFirstCol + RenderDetails.detailsFirstColMaxIdx - 1
+            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
+
         }
 
     }

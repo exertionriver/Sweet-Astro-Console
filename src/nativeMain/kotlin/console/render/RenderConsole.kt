@@ -16,9 +16,9 @@ object RenderConsole {
     const val aspectsBottomSpaceOffset = 2
     val celestialsRenderMaxIdx =
         (Celestial.values().size + celestialsTitleOffset + celestialsBottomSpaceOffset) - 1
-    val housesRenderMaxIdx = (CelestialHouse.values().size + housesTitleOffset + housesBottomSpaceOffset) - 1
+//    val housesRenderMaxIdx = (CelestialHouse.values().size + housesTitleOffset + housesBottomSpaceOffset) - 1
     val aspectNatalCompRenderMaxIdx = (AspectCelestial.getChartSize() + aspectsBottomSpaceOffset)
-    val detailsRenderMaxIdx = celestialsRenderMaxIdx + housesRenderMaxIdx + 1
+    val detailsRenderMaxIdx = celestialsRenderMaxIdx + aspectNatalCompRenderMaxIdx + 2
     const val noRenderCelestials = -1
     const val noRenderHouseAspect = -1
 

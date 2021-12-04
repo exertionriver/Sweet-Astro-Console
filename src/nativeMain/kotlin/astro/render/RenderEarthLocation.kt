@@ -49,9 +49,12 @@ object RenderEarthLocation {
 
     fun getRenderEarthLocationDataFirstLine(earthLocation: EarthLocation) : String {
 
+        val timeZoneOffsetString = earthLocation.getTimezoneOffsetString()
+        val postTzPad = 10 - timeZoneOffsetString.length // "+3.0" == 6, "-3.0" == 6, "-12.0" == 5
+
         return " " + getRenderLocalTimeLabel(earthLocation.localDateTime) + " ".padStart(6, ' ') +
                 getRenderLocalDateLabel(earthLocation.localDateTime) + " ".padStart(6, ' ') +
-                getRenderLocalTimezoneLabel(earthLocation.getTimezoneOffsetString()) + " ".padStart(6, ' ') +
+                getRenderLocalTimezoneLabel(earthLocation.getTimezoneOffsetString()) + " ".padStart(postTzPad, ' ') +
                 getRenderLocalLatitudeLabel(earthLocation.latitude)
     }
 

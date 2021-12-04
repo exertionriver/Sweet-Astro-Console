@@ -23,13 +23,13 @@ object RenderDetails {
     val detailsFirstColMaxIdx = 19
     val dataColumnEndWidth = getDetailsEndColumnWidth()
 
-    fun renderDetailsData(celestialRenderIdx: Int, housesRenderIdx: Int, curChart: ValueChart) {
-        printf("%s%s%s", prepareDetailsDataFirstCol(celestialRenderIdx, housesRenderIdx, curChart)
-            , prepareDetailsDataSecondCol(celestialRenderIdx, housesRenderIdx, curChart)
-            , prepareDetailsDataThirdCol(celestialRenderIdx, housesRenderIdx, curChart) )
+    fun renderDetailsData(renderIdx: Int, curChart: ValueChart) {
+        printf("%s%s%s", prepareDetailsDataFirstCol(renderIdx, curChart)
+            , prepareDetailsDataSecondCol(renderIdx, curChart)
+            , prepareDetailsDataThirdCol(renderIdx, curChart) )
     }
 
-    fun prepareDetailsDataFirstCol(celestialRenderIdx: Int, housesRenderIdx: Int, curChart: ValueChart) : String = memScoped {
+    fun prepareDetailsDataFirstCol(renderIdx: Int, curChart: ValueChart) : String = memScoped {
 
         val detailsDataLineFirstColSize = alloc<size_tVar>()
         detailsDataLineFirstColSize.value = 128u
@@ -39,15 +39,13 @@ object RenderDetails {
 
         val dataIdxMax = curChart.getValueAspects().size - 1
 
-        val detailsIdxFirstCol = if (celestialRenderIdx == RenderConsole.noRenderCelestials) (housesRenderIdx + RenderCelestials.celestialsRenderMaxIdx + 1) else celestialRenderIdx
-
-        val dataIdxFirstCol = detailsIdxFirstCol - 1
+        val dataIdxFirstCol = renderIdx - 1
 
         //adding 1 since data is 0-indexed
         val firstColBorder = getBorderColor(dataIdxFirstCol + 1) + getFirstColBorderShape(dataIdxFirstCol + 1) + Constants.KNRM
 
         when {
-            (detailsIdxFirstCol == 0) -> {
+            (renderIdx == 0) -> {
                 if (dataIdxMax > dataIdxFirstCol) {
                     snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value, "%s", getTopFirstColBorderShape())
                     } else {
@@ -55,15 +53,15 @@ object RenderDetails {
                     }
             }
             else -> {
-                if (dataIdxMax >= dataIdxFirstCol) {
-                    val idxSpace = if (detailsIdxFirstCol <= 10) " " else ""
+                if (dataIdxMax >= detailsFirstColMaxIdx) {
+                    val idxSpace = if (renderIdx <= 10) " " else ""
 
-                    if (detailsIdxFirstCol < detailsFirstColMaxIdx) {
+                    if (renderIdx < detailsFirstColMaxIdx) {
                         val firstColumnAspect = curChart.getValueAspects()[dataIdxFirstCol]
                         val firstColumnData = firstColBorder + " " + idxSpace + dataIdxFirstCol.toString() + ":" + RenderAspect(firstColumnAspect).getRenderLabel()
 
                         snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%s", firstColumnData)
-                    } else if (detailsIdxFirstCol == detailsFirstColMaxIdx) {
+                    } else if (renderIdx == detailsFirstColMaxIdx) {
                         snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth - 1, "")
                     } //else summary lines formatting
                 } else {
@@ -75,7 +73,7 @@ object RenderDetails {
         return detailsDataLineFirstCol.toKString()
     }
 
-    fun prepareDetailsDataSecondCol(celestialRenderIdx: Int, housesRenderIdx: Int, curChart: ValueChart) : String = memScoped {
+    fun prepareDetailsDataSecondCol(renderIdx: Int, curChart: ValueChart) : String = memScoped {
 
         val detailsDataLineSecondColSize = alloc<size_tVar>()
         detailsDataLineSecondColSize.value = 128u
@@ -85,16 +83,14 @@ object RenderDetails {
 
         val dataIdxMax = curChart.getValueAspects().size - 1
 
-        val detailsIdxFirstCol = if (celestialRenderIdx == RenderConsole.noRenderCelestials) (housesRenderIdx + RenderCelestials.celestialsRenderMaxIdx + 1) else celestialRenderIdx
-
-        val dataIdxFirstCol = detailsIdxFirstCol - 1
+        val dataIdxFirstCol = renderIdx - 1
         val dataIdxSecondCol = dataIdxFirstCol + detailsFirstColMaxIdx - 1
 
         //adding 1 since data is 0-indexed
         val secondColBorder = getBorderColor(dataIdxSecondCol + 1) + getAddlColBorderShape(dataIdxSecondCol + 1) + Constants.KNRM
 
         when {
-            (detailsIdxFirstCol == 0) -> {
+            (renderIdx == 0) -> {
                 if (dataIdxMax > dataIdxSecondCol) {
                     snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s%s", detailsColumnWidth - getTopFirstColBorderShapeLength(), "", getTopAddlColBordersShape())
 
@@ -122,7 +118,7 @@ object RenderDetails {
         return detailsDataLineSecondCol.toKString()
     }
 
-    fun prepareDetailsDataThirdCol(celestialRenderIdx: Int, housesRenderIdx: Int, curChart: ValueChart) : String = memScoped {
+    fun prepareDetailsDataThirdCol(renderIdx: Int, curChart: ValueChart) : String = memScoped {
 
         val detailsDataLineThirdColSize = alloc<size_tVar>()
         detailsDataLineThirdColSize.value = 128u
@@ -132,16 +128,15 @@ object RenderDetails {
 
         val dataIdxMax = curChart.getValueAspects().size - 1
 
-        val detailsIdxFirstCol = if (celestialRenderIdx == RenderConsole.noRenderCelestials) (housesRenderIdx + RenderCelestials.celestialsRenderMaxIdx + 1) else celestialRenderIdx
-        val dataIdxFirstCol = detailsIdxFirstCol - 1
+        val dataIdxFirstCol = renderIdx - 1
         val dataIdxSecondCol = dataIdxFirstCol + detailsFirstColMaxIdx - 1
-        val dataIdxThirdCol = dataIdxSecondCol + RenderConsole.detailsRenderMaxIdx + 4
+        val dataIdxThirdCol = dataIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
 
         //adding 1 since data is 0-indexed
         val thirdColBorder = getBorderColor(dataIdxThirdCol + 1) + getAddlColBorderShape(dataIdxThirdCol + 1) + Constants.KNRM
 
         when {
-            (detailsIdxFirstCol == 0) -> {
+            (renderIdx == 0) -> {
                 if (dataIdxMax > dataIdxThirdCol) {
                     snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s%s%*s"
                         , detailsColumnWidth - getTopAddlColBorderShapeLength(), "", getTopAddlColBordersShape()
@@ -191,7 +186,7 @@ object RenderDetails {
             RenderCelestials.renderCelestialsData(celestialRenderIdx, curChartState, refSnapshot, synSnapshot)
 
             if (curDetailsState == DetailsState.SHOW_DETAILS)
-                renderDetailsData(celestialRenderIdx, RenderConsole.noRenderHouseAspect, curChart)
+                renderDetailsData(celestialRenderIdx, curChart)
             else
                 printf("%*s", getDetailsColumnWidth(curAnalysisState) * 4, "")
 
@@ -221,7 +216,7 @@ object RenderDetails {
             RenderSummary.renderSummaryData(houseAspectRenderIdx, curChart, refNatalChart, synNatalChart, curChartState)
 
            if (curDetailsState == DetailsState.SHOW_DETAILS)
-                renderDetailsData(RenderConsole.noRenderCelestials, houseAspectRenderIdx, curChart)
+                renderDetailsData(houseAspectRenderIdx + RenderConsole.celestialsRenderMaxIdx + 1, curChart)
             else
                 printf("%*s", getDetailsColumnWidth(curAnalysisState) * 3, "")
 
