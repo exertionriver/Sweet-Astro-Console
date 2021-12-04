@@ -26,9 +26,9 @@ class TestCalcUt {
 
         println("Universal Time Celestials (raw-long)")
         uniCelestials.forEachIndexed { idx, celestial -> println ("${Celestial.fromOrdinal(idx)}, ${celestial.longitude}") }
-        assertEquals(234.0540210285634, uniCelestials[0].longitude)
-        assertEquals(250.67432591735695, uniCelestials[4].longitude)
-        assertEquals(257.15838507849634, uniCelestials[8].longitude)
+        assertEquals(234.05402102854407, uniCelestials[0].longitude)
+        assertEquals(250.6743259173525, uniCelestials[4].longitude)
+        assertEquals(257.1583850784961, uniCelestials[8].longitude)
 
         val uniCelestialsDeg = uniCelestials.map{ it.longitude.toInt() }
         val uniCelestialsMin = uniCelestials.mapIndexed { idx, celestial -> ((celestial.longitude - uniCelestialsDeg[idx]) * 60).toInt() }

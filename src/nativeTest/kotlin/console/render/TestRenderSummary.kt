@@ -1,8 +1,7 @@
-package render
+package console.render
 
 import astro.state.*
 import astro.value.ValueChart
-import console.render.RenderSummary
 import profile.base.Profiles
 import kotlin.test.Test
 import kotlin.test.assertEquals

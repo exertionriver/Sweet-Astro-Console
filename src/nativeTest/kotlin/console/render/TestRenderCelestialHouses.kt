@@ -1,11 +1,8 @@
-package render
+package console.render
 
-import console.render.RenderCelestialHouses
-import console.render.RenderSummary
 import profile.base.Profiles
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 object TestRenderCelestialHouses {
 

@@ -1,15 +1,15 @@
 plugins {
-    kotlin("multiplatform") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    kotlin("multiplatform") version "1.5.10"
 }
 
-group = "me.ipowell"
-version = "1.0-SNAPSHOT"
+group = "river.exertion"
+version = "0.3.2"
 
 repositories {
     mavenCentral()
     maven(url = "https://kotlin.bintray.com/kotlinx/")
 }
+
 kotlin {
     linuxX64("native") {
         compilations["main"].cinterops {
@@ -28,7 +28,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
             }
         }
     }

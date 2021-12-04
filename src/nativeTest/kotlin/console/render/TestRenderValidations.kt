@@ -1,4 +1,4 @@
-package render
+package console.render
 
 import console.render.RenderValidations
 import kotlin.test.Test

@@ -3,8 +3,6 @@ package profile.base
 import astro.base.CelestialSnapshot
 import astro.base.EarthLocation
 import kotlinx.datetime.LocalDateTime
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
 
 @ExperimentalUnsignedTypes
 data class Profile (val profileName : String

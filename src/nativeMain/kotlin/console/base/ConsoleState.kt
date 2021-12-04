@@ -95,13 +95,15 @@ class ConsoleState {
             curProfileIdx = Profiles.getCurProfileIdx(curProfileIdx, input) // changes with input--default is Profiles.PROFILE_CUR_NAV
             synProfileIdx = Profiles.getSynProfileIdx(synProfileIdx, input) // changes with input--default is Profiles.PROFILE_CUR_NAV, selecting state is Profiles.PROFILE_NONE
 
-            curNavUTCTime = if (Profiles.isStoredProfile(curProfileIdx) && curNavState == NavState.PROFILE_RECALL)
-                profiles[curProfileIdx].earthLocation.utcDateTime
-            else
-                curNavState.getCurNavTime(curNavDirState, curNavProfile.earthLocation.utcDateTime)
-
-            //set curNav profile, with synProfile transits (for synastry chart)
-            curNavProfile = Profile.getCopyWithDateTimeEntry(profiles[curProfileIdx], curNavUTCTime, profiles[synProfileIdx])
+            if (Profiles.isStoredProfile(curProfileIdx) && curNavState == NavState.PROFILE_RECALL) {
+                curNavUTCTime = profiles[curProfileIdx].earthLocation.utcDateTime
+                curNavProfile = Profile.getCopyWithDateTimeEntry(profiles[curProfileIdx], curNavUTCTime, profiles[synProfileIdx])
+            }
+            else {
+                curNavUTCTime = curNavState.getCurNavTime(curNavDirState, curNavProfile.earthLocation.utcDateTime)
+                //set curNav profile, with synProfile transits (for synastry chart)
+                curNavProfile = Profile.getCopyWithDateTimeEntry(curNavProfile, curNavUTCTime, profiles[synProfileIdx])
+            }
 
             //re-initialize these to current / navigation snapshot
             refSnapshot = curNavProfile.celestialSnapshot
@@ -111,7 +113,7 @@ class ConsoleState {
 
             curRefNatalChart = StateChart(refSnapshot, ChartState.NATAL_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState)
 
-            //if no second profile is chosen, pause on previous chart
+            //if no second profile is chosen, render previous chart
             if ( Profiles.isNoneProfile(synProfileIdx) ) {
                 curChart = prevChart
                 curSynNatalChart = prevSynNatalChart

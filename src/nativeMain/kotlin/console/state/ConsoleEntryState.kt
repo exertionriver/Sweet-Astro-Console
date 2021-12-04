@@ -79,6 +79,8 @@ object ConsoleEntryState {
                 returnCurProfile = Profile.getCopyWithDateTimeEntry(prevCurProfile, newDateTime)
             }
             EntryState.LONG_ENTRY -> {
+                if (!Validation.isValidDoubleFormat(kEntry)) return prevCurProfile
+
                 val entry = kEntry.toDouble()
 
                 if (!Validation.isValidEntry(entry, Validation.LONGITUDE_VALIDATION)) return prevCurProfile
@@ -86,6 +88,8 @@ object ConsoleEntryState {
                 returnCurProfile = Profile.getCopyWithLongitudeEntry(prevCurProfile, entry)
             }
             EntryState.LAT_ENTRY -> {
+                if (!Validation.isValidDoubleFormat(kEntry)) return prevCurProfile
+
                 val entry = kEntry.toDouble()
 
                 if (!Validation.isValidEntry(entry, Validation.LATITUDE_VALIDATION)) return prevCurProfile
@@ -93,11 +97,13 @@ object ConsoleEntryState {
                 returnCurProfile = Profile.getCopyWithLatitudeEntry(prevCurProfile, entry)
             }
             EntryState.TZ_ENTRY -> {
-                val entry = kEntry.toDouble()
+                if (!Validation.isValidIntFormat(kEntry)) return prevCurProfile
+
+                val entry = kEntry.toInt()
 
                 if (!Validation.isValidEntry(entry, Validation.TIMEZONE_VALIDATION)) return prevCurProfile
 
-                returnCurProfile = Profile.getCopyWithTimezoneEntry(prevCurProfile, entry)
+                returnCurProfile = Profile.getCopyWithTimezoneEntry(prevCurProfile, entry.toDouble())
             }
             EntryState.PROFILE_ENTRY -> {
                 if (!Validation.isValidEntry(kEntry, Validation.PROFILE_NAME_VALIDATION)) return prevCurProfile
