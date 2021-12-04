@@ -166,6 +166,12 @@ class ConsoleState {
             RenderDetails.renderCelestialsDetailsData(refSnapshot, synSnapshot, curValueChart, curChart.chartState, curDetailsState, curAnalysisState)
             RenderDetails.renderHouseAspectDetailsData(refSnapshot, curValueChart, curRefNatalValueChart, curSynNatalValueChart, curChart.chartState, curDetailsState, curAnalysisState)
 
+            //help labels
+            RenderConsole.renderHelpLabels(curHelpState)
+
+            //clear past entry prompts
+            RenderConsole.clearInputPrompts(curEntryState)
+
             //entry state handling
             curNavProfile = curEntryState.getCurEntryProfile(curNavProfile) // return profile copy of current if entry is good, previous if no input or validation fail
 
@@ -177,8 +183,7 @@ class ConsoleState {
 
             curEntryState = EntryState.NO_ENTRY //reset entry to none
 
-            RenderConsole.renderHelpLabels(curHelpState)
-
+            //pause to sync with second
             RenderHandler.delayRun(1)
         }
     }

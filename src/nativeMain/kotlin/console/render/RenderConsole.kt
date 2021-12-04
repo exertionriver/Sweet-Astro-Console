@@ -1,8 +1,10 @@
 package console.render
 
 import Constants
+import Constants.LABEL_SPACE
 import astro.base.*
 import astro.render.RenderEarthLocation
+import astro.state.EntryState
 import astro.state.HelpState
 import console.base.ConsoleState
 import platform.posix.system
@@ -44,8 +46,14 @@ object RenderConsole {
 
     @ExperimentalUnsignedTypes
     fun renderHelpLabels(curHelpState : HelpState) {
-
         println( curHelpState.getRenderHelpFirstLine() )
         println( curHelpState.getRenderHelpSecondLine() )
+    }
+
+    fun clearInputPrompts(curEntryState: EntryState) {
+        if (curEntryState == EntryState.NO_ENTRY) {
+            println( LABEL_SPACE.padEnd(64, ' ') )
+            println( LABEL_SPACE.padEnd(64, ' ') )
+        }
     }
 }
