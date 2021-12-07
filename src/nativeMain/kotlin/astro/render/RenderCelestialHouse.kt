@@ -29,6 +29,10 @@ enum class RenderCelestialHouse {
             return Constants.SYM_PART_OF_FORTUNE.plus(LABEL_SPACE)
         }
 
+        fun getPartOfSpiritLabel() : String {
+            return Constants.SYM_PART_OF_SPIRIT.plus(LABEL_SPACE)
+        }
+
         fun getHousesLabel() = Constants.SYM_HOUSE + "(" + Constants.SYM_EARTH_LONG + "," + Constants.SYM_EARTH_LAT + ")"
         fun getHousesSignLabel() = Constants.SYM_SIGN + " (" + Constants.SYM_HOUSE + ")"
         fun getHousesLongitudeLabel() = Constants.SYM_CELESTIAL_LONG + "(" + Constants.SYM_HOUSE + ")"

@@ -17,7 +17,7 @@ import swe.HouseName
 
 object RenderCelestialHouses {
 
-    val housesRenderMaxIdx = (CelestialHouse.values().size + 2 + 1) - 1
+    val housesRenderMaxIdx = (CelestialHouse.values().size + 2 + 1)
     val housesTitleOffset = 2
     val housesBottomSpaceOffset = 1
 
@@ -30,7 +30,8 @@ object RenderCelestialHouses {
 
         val houseHeaderRenderIdx = 0
         val columnHeaderRenderIdx = 1
-        val pofRowRenderIdx = housesRenderMaxIdx
+        val pofRowRenderIdx = housesRenderMaxIdx - 1
+        val posRowRenderIdx = housesRenderMaxIdx
 
         val sectionWidth = 38
         val sectionEndWidth = 1
@@ -95,6 +96,25 @@ object RenderCelestialHouses {
                     signOut,
                     "",
                     refSnapshot.partOfFortuneData,
+                    "",
+                    signLongitudeOut,
+                    sectionEndWidth,
+                    ""
+                )
+            }
+            (renderIdx == posRowRenderIdx) -> {
+                signOut = RenderSign.getSignLabelFromCelestialLongitude(refSnapshot.partOfSpiritData)
+
+                signLongitudeOut = CelestialData.getFormattedSignLongitude(refSnapshot.partOfSpiritData)
+
+                snprintf(houseDataLine, houseDataLineSize.value,
+                    "%3s%s%5s%s%3s%9.4f%3s%9s%*s",
+                    "",
+                    RenderCelestialHouse.getPartOfSpiritLabel(),
+                    "",
+                    signOut,
+                    "",
+                    refSnapshot.partOfSpiritData,
                     "",
                     signLongitudeOut,
                     sectionEndWidth,

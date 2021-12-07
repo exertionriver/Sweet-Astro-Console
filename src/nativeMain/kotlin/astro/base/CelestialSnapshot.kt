@@ -15,6 +15,11 @@ data class CelestialSnapshot(val refEarthLocation: EarthLocation
             , refCelestialHouseData[CelestialHouse.HOUSE_1_ASC.ordinal]
             , refCelestialData[Celestial.SUN.ordinal].celestialHouse)
 
+    val partOfSpiritData : Double = getPartOfSpiritData(refCelestialData[Celestial.SUN.ordinal].longitude
+        , refCelestialData[Celestial.MOON.ordinal].longitude
+        , refCelestialHouseData[CelestialHouse.HOUSE_1_ASC.ordinal]
+        , refCelestialData[Celestial.SUN.ordinal].celestialHouse)
+
     fun getAspectCelestialLongitudeMap() : Map<AspectCelestial, Double> {
 
         val unsortedMap : MutableMap<AspectCelestial, Double> = HashMap()
@@ -45,6 +50,7 @@ data class CelestialSnapshot(val refEarthLocation: EarthLocation
         if (!refCelestialHouseData.contentEquals(other.refCelestialHouseData)) return false
         if (!refCelestialData.contentEquals(other.refCelestialData)) return false
         if (partOfFortuneData != other.partOfFortuneData) return false
+        if (partOfSpiritData != other.partOfSpiritData) return false
 
         return true
     }
@@ -53,6 +59,7 @@ data class CelestialSnapshot(val refEarthLocation: EarthLocation
         var result = refCelestialHouseData.contentHashCode()
         result = 31 * result + refCelestialData.hashCode()
         result = 31 * result + partOfFortuneData.hashCode()
+        result = 31 * result + partOfSpiritData.hashCode()
         return result
     }
 
@@ -65,6 +72,13 @@ data class CelestialSnapshot(val refEarthLocation: EarthLocation
         fun getPartOfFortuneData(sunLongitude : Double, moonLongitude : Double, ascLongitude : Double, sunHouse : Double) : Double {
 
             val sunMoonDiff : Double = if (isNightChart(sunHouse)) (sunLongitude - moonLongitude) else (moonLongitude - sunLongitude)
+
+            return (ascLongitude + sunMoonDiff).normalizeDeg()
+        }
+
+        fun getPartOfSpiritData(sunLongitude : Double, moonLongitude : Double, ascLongitude : Double, sunHouse : Double) : Double {
+
+            val sunMoonDiff : Double = if (isNightChart(sunHouse)) (moonLongitude - sunLongitude) else (sunLongitude - moonLongitude)
 
             return (ascLongitude + sunMoonDiff).normalizeDeg()
         }

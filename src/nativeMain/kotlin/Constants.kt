@@ -66,7 +66,7 @@ object Constants {
     const val SYM_HOUSE_12 = "\u246B"
     const val SYM_VERTEX = "V\u2093"
     const val SYM_PART_OF_FORTUNE = "\u2297"
-    const val SYM_PART_OF_SPIRIT = "\u23C0" // or "\u233D"
+    const val SYM_PART_OF_SPIRIT = "\u23C0"
     const val SYM_PART_OF_EROS = "\u2619"
 
     const val SYM_ONE_EIGHTH = "\u215B"
