@@ -15,22 +15,26 @@ object RenderChartState {
             chartState.getLabel()
         )
 
-    fun getRenderChartPercentageLabel(colorString : String) : String =
-        RenderState.getNestedLabelString(Constants.KCYN, "%", colorString, Constants.SYM_SIGMA)
+    fun getSumLabelGuide() : String = (Constants.KGRN + "+" + Constants.KCYN + "." + Constants.KRED + "-  ")
 
-    fun getRenderChartSumRomLabel(chartState : ChartState, colorString : String) : String =
-        RenderState.getNestedLabelString(
-            Constants.KCYN,
-            AnalysisState.ROMANTIC_ANALYSIS.getLabel(),
-            colorString,
-            chartState.getLabel()
-        )
-
-    fun getRenderChartPercentageRomLabel(colorString : String) : String =
+    fun getRenderChartPercentLabel(chartState : ChartState, colorString : String) : String =
         RenderState.getNestedLabelString(
             Constants.KCYN,
             "%",
             colorString,
-            AnalysisState.ROMANTIC_ANALYSIS.getLabel()
+            chartState.getLabel()
         )
+
+    fun getPercentLabelGuide() : String = (Constants.KGRN + Constants.SYM_SUNNY + Constants.KCYN + " ." + Constants.KRED + Constants.SYM_CLOUDY + "  ")
+
+    fun getRenderChartStimLabel(chartState : ChartState, colorString : String) : String =
+        RenderState.getNestedLabelString(
+            Constants.KCYN,
+            "|" + Constants.SYM_SIGMA,
+            colorString,
+            chartState.getLabel()
+        ) + Constants.KCYN + "|" + Constants.KNRM
+
+    fun getStimLabelGuide() : String = ("  " + Constants.KYEL + Constants.SYM_STIMULATION + "  ")
+
 }

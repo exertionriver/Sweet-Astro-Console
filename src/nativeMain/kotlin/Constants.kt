@@ -7,7 +7,7 @@ import platform.posix.pow
 @Suppress("UNUSED")
 object Constants {
     const val APP_NAME = "SweetAstroConsole"
-    const val APP_VERSION = "0.3.2"
+    const val APP_VERSION = "0.3.3"
 
     //EPHE_PATH works for main code. Created ln -s $EPHE_PATH /users/ephe for test code
     const val EPHE_PATH = "/usr/local/swe/ephe/"
@@ -66,6 +66,8 @@ object Constants {
     const val SYM_HOUSE_12 = "\u246B"
     const val SYM_VERTEX = "V\u2093"
     const val SYM_PART_OF_FORTUNE = "\u2297"
+    const val SYM_PART_OF_SPIRIT = "\u23C0" // or "\u233D"
+    const val SYM_PART_OF_EROS = "\u2619"
 
     const val SYM_ONE_EIGHTH = "\u215B"
     const val SYM_ONE_QUARTER = "\u00BC"
@@ -256,6 +258,10 @@ object Constants {
     const val SYM_MINOR_BOX = "\u229F" //box with minus
     const val SYM_ALL_BOX = "\u22A0" //box with cross
 
+    const val SYM_SUNNY = "\u2600"
+    const val SYM_CLOUDY = "\u2601"
+    const val SYM_STIMULATION = "\u26A1\uFE0E" //voltage
+    const val SYM_IMPROVEMENT = "\u2195" //updown arrow
     const val SYM_CHARACTER = "\u2638" //dharmachakra
     const val SYM_ROMANTIC = "\u2661" //empty heart
     const val SYM_PLANET = SYM_CELESTIAL

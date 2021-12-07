@@ -1,6 +1,9 @@
 package console.render
 
 import astro.render.RenderChartState
+import astro.render.RenderChartState.getPercentLabelGuide
+import astro.render.RenderChartState.getStimLabelGuide
+import astro.render.RenderChartState.getSumLabelGuide
 import astro.state.AnalysisState
 import astro.state.ChartState
 import astro.state.StateChart
@@ -15,8 +18,24 @@ object RenderSummary {
 
     val summaryHeaderIdx = 0
     val baseCurChartSummaryIdx = 1
-    val baseRefNatalChartSummaryIdx = 2
-    val baseSynNatalChartSummaryIdx = 3
+    val baseCurChartPercentIdx = 2
+    val baseCurChartStimulationIdx = 3
+
+    val baseRefNatalChartSummaryIdx = 5
+    val baseRefNatalChartPercentIdx = 6
+    val baseRefNatalChartStimulationIdx = 7
+
+    val baseSynNatalChartSummaryIdx = 9
+    val baseSynNatalChartPercentIdx = 10
+    val baseSynNatalChartStimulationIdx = 11
+
+    val impRefNatalChartSummaryIdx = 13
+    val impRefNatalChartPercentIdx = 14
+    val impRefNatalChartStimulationIdx = 15
+
+    val impSynNatalChartSummaryIdx = 17
+    val impSynNatalChartPercentIdx = 18
+    val impSynNatalChartStimulationIdx = 19
 
     fun renderSummaryData(renderIdx: Int, curChart: ValueChart, refNatalChart: ValueChart, synNatalChart: ValueChart, curChartState : ChartState) {
 
@@ -35,72 +54,137 @@ object RenderSummary {
         when {
             (renderIdx == summaryHeaderIdx) -> {
                 snprintf(summaryDataLine, summaryDataLineSize.value, "%s "
-                    , getTopSummaryColBorderShape(curSummaryColumnWidth) )
+                    , getTopSummaryColBorderShape(curSummaryColumnWidth)
+                )
             }
             (renderIdx == baseCurChartSummaryIdx) -> {
-                val baseSumLine = getSumLine(curChart, curChart, RenderChartState.getRenderChartSumLabel(curChartState, Constants.KCYN))
 
-                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s "
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , baseSumLine)
+                    , getChartSumLine(curChart, RenderChartState.getRenderChartSumLabel(curChartState, Constants.KCYN))
+                    , getSumLabelGuide()
+                )
+            }
+            (renderIdx == baseCurChartPercentIdx) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartPercentLine(curChart, RenderChartState.getRenderChartPercentLabel(curChartState, Constants.KCYN))
+                    , getPercentLabelGuide()
+                )
+            }
+            (renderIdx == baseCurChartStimulationIdx) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartStimulationLine(curChart, RenderChartState.getRenderChartStimLabel(curChartState, Constants.KCYN))
+                    , getStimLabelGuide()
+                )
             }
             (renderIdx == baseRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
-                val baseSumLine = getSumLine(refNatalChart, refNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU))
 
-                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s "
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , baseSumLine)
+                    , getChartSumLine(refNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getSumLabelGuide()
+                )
+            }
+            (renderIdx == baseRefNatalChartPercentIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartPercentLine(refNatalChart, RenderChartState.getRenderChartPercentLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getPercentLabelGuide()
+                )
+            }
+            (renderIdx == baseRefNatalChartStimulationIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartStimulationLine(refNatalChart, RenderChartState.getRenderChartStimLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getStimLabelGuide()
+                )
             }
             (renderIdx == baseSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
-                val baseSumLine = getSumLine(synNatalChart, synNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG))
 
-                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s "
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , baseSumLine)
+                    , getChartSumLine(synNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getSumLabelGuide()
+                )
+            }
+            (renderIdx == baseSynNatalChartPercentIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartPercentLine(synNatalChart, RenderChartState.getRenderChartPercentLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getPercentLabelGuide()
+                )
+            }
+            (renderIdx == baseSynNatalChartStimulationIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartStimulationLine(synNatalChart, RenderChartState.getRenderChartStimLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getStimLabelGuide()
+                )
+            }
+        //improvement
+            (renderIdx == impRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpSumLine(curChart, refNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getSumLabelGuide()
+                )
+            }
+            (renderIdx == impRefNatalChartPercentIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpPercentLine(curChart, refNatalChart, RenderChartState.getRenderChartPercentLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getPercentLabelGuide()
+                )
+            }
+            (renderIdx == impRefNatalChartStimulationIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpStimulationLine(curChart, refNatalChart, RenderChartState.getRenderChartStimLabel(ChartState.NATAL_CHART, Constants.KBLU))
+                    , getStimLabelGuide()
+                )
+            }
+            (renderIdx == impSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpSumLine(curChart, synNatalChart, RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getSumLabelGuide()
+                )
+            }
+            (renderIdx == impSynNatalChartPercentIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpPercentLine(curChart, synNatalChart, RenderChartState.getRenderChartPercentLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getPercentLabelGuide()
+                )
+            }
+            (renderIdx == impSynNatalChartStimulationIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , getChartImpStimulationLine(curChart, synNatalChart, RenderChartState.getRenderChartStimLabel(ChartState.NATAL_CHART, Constants.KMAG))
+                    , getStimLabelGuide()
+                )
             }
             else ->
                 snprintf(summaryDataLine, summaryDataLineSize.value,"%s %*s"
                     , getSummaryColBorderShape(renderIdx)
                     , curSummaryColumnWidth, "")
-
-/*                when (curChart.chartState) {
-                    ChartState.NATAL_CHART -> prepareNatalSummary(renderIdx, valueCurChart, valueRefNatalChart, curAnalysisState)
-                    //comp / syn charts
-                    else -> prepareCompSynSummary(renderIdx, valueCurChart, valueRefNatalChart, valueSynNatalChart, curAnalysisState)
-                }
-  */      }
+        }
 
         return summaryDataLine.toKString()
-    }
-
-    fun prepareNatalSummary(renderIdx: Int, valueCurChart: ValueChart, valueRefNatalChart: ValueChart, curAnalysisState: AnalysisState) : String {
-
-        val summaryColumnWidth = RenderDetails.getDetailsColumnWidth(curAnalysisState)
-
-        //chart summary
-
-        //analysis summary
-        when (curAnalysisState) {
-
-        }
-
-        return "natalSummary"
-    }
-
-    fun prepareCompSynSummary(renderIdx: Int, valueCurChart: ValueChart, valueRefNatalChart: ValueChart, valueSynNatalChart: ValueChart, curAnalysisState: AnalysisState) : String {
-
-        val summaryColumnWidth = RenderDetails.getDetailsColumnWidth(curAnalysisState)
-
-        //chart and natals summary
-        val baseRefProfileSummaryIdx = baseCurChartSummaryIdx + 1
-        val baseSynProfileSummaryIdx = baseCurChartSummaryIdx + 2
-
-        //analysis summary
-        when (curAnalysisState) {
-
-        }
-
-        return "compSynSummary"
     }
 
     fun renderSummaryDataLegacy(renderIdx: Int, curChart: StateChart, refNatalChart: StateChart, synNatalChart: StateChart, curAnalysisState: AnalysisState) {
@@ -370,26 +454,65 @@ object RenderSummary {
         }
   */  }
 
-    fun getSumLine(firstChart : ValueChart, secondChart : ValueChart, chartLabel : String) : String {
-        val pos = ((firstChart.getBaseValue().positive + secondChart.getBaseValue().positive) / 2)
-        val neg = ((firstChart.getBaseValue().negative + secondChart.getBaseValue().negative) / 2)
-//        val avgVal = AspectValue(pos, neg)
-        val posLabel = abs(pos)
-        val negLabel = abs(neg)
-//        val posLabel = RenderAspect.getLabel(avgVal, AspectValue.POSITIVE_VALUE)
-//        val negLabel = RenderAspect.getLabel(avgVal, AspectValue.NEGATIVE_VALUE)
+    fun getChartSumLine(firstChart : ValueChart, chartLabel : String) : String {
+        val pos = firstChart.getBaseValue().positive
+        val neg = firstChart.getBaseValue().negative
+        val posLabel = Constants.KGRN + abs(pos).toString().padStart(4, ' ')
+        val negLabel = Constants.KRED + abs(neg).toString().padStart(4, ' ')
+
+        //TODO: move label to Astro folder
+        return chartLabel + ":" + posLabel + Constants.KCYN + "." + negLabel + " " + Constants.KNRM
+    }
+
+    fun getChartPercentLine(firstChart : ValueChart, chartLabel : String) : String {
+        val pos = firstChart.getBaseValue().positive
+        val neg = firstChart.getBaseValue().negative
         val total = abs(pos) + abs(neg)
+
         val cons_num = (if(pos > 0) pos else 0) + (if(neg > 0) neg else 0)
         val diss_num = (if(pos < 0) pos else 0) + (if(neg < 0) neg else 0)
         val cons = abs(cons_num.toDouble() / total.toDouble() * 100).toInt()
         val diss = abs(diss_num.toDouble() / total.toDouble() * 100).toInt()
+        val consLabel = Constants.KGRN + cons.toString().padStart(4, ' ')
+        val dissLabel = Constants.KRED + diss.toString().padStart(4, ' ')
 
         //TODO: move label to Astro folder
-        return chartLabel + ":" +
-                Constants.KGRN + posLabel.toString().padStart(4, ' ') + Constants.KCYN + "." +
-                Constants.KRED + negLabel.toString().padStart(4, ' ') + " " +
-                Constants.KGRN + cons.toString().padStart(2, ' ') + Constants.KCYN + "." +
-                Constants.KRED + diss.toString().padStart(2, ' ') + Constants.KNRM
+        return chartLabel + ":" + consLabel + Constants.KCYN + "." + dissLabel + Constants.KNRM
+    }
+
+    fun getChartStimulationLine(firstChart : ValueChart, chartLabel : String) : String {
+
+        //TODO: move label to Astro folder
+        return chartLabel + ":" + Constants.KYEL + firstChart.getBaseValue().getStimulation().toString().padStart(7, ' ')
+    }
+
+    fun getChartImpSumLine(sharedChart : ValueChart, natalChart : ValueChart, chartLabel : String) : String {
+        val pos = sharedChart.getBaseValue().positive - natalChart.getBaseValue().positive
+        val neg = -1 * (sharedChart.getBaseValue().negative - natalChart.getBaseValue().negative)
+        val posLabel = ( if (pos > 0) Constants.KGRN else if (pos < 0) Constants.KRED else Constants.KNRM ) + abs(pos).toString().padStart(3, ' ')
+        val negLabel = ( if (neg > 0) Constants.KRED else if (neg < 0) Constants.KGRN else Constants.KNRM ) + abs(neg).toString().padStart(4, ' ')
+
+        //TODO: move label to Astro folder
+        return Constants.KBYEL + Constants.SYM_IMPROVEMENT + chartLabel + ":" + posLabel + Constants.KCYN + "." + negLabel + " " + Constants.KNRM
+    }
+
+    fun getChartImpPercentLine(sharedChart : ValueChart, natalChart : ValueChart, chartLabel : String) : String {
+        val cons = (100 * sharedChart.getBaseValue().positive.toDouble() / natalChart.getBaseValue().positive.toDouble()).toInt()
+        val diss = (100 * sharedChart.getBaseValue().negative.toDouble() / natalChart.getBaseValue().negative.toDouble()).toInt()
+        val consLabel = ( if (cons > 100) Constants.KGRN else if (cons < 100) Constants.KRED else Constants.KNRM ) + abs(100 - cons).toString().padStart(3, ' ')
+        val dissLabel = ( if (diss > 100) Constants.KRED else if (diss < 100) Constants.KGRN else Constants.KNRM ) + abs(100 - diss).toString().padStart(4, ' ')
+
+        //TODO: move label to Astro folder
+        return Constants.KBYEL + Constants.SYM_IMPROVEMENT + chartLabel + ":" + consLabel + Constants.KCYN + "." + dissLabel + Constants.KNRM
+    }
+
+    fun getChartImpStimulationLine(sharedChart : ValueChart, natalChart : ValueChart, chartLabel : String) : String {
+
+        val impStim = sharedChart.getBaseValue().getStimulation() - natalChart.getBaseValue().getStimulation()
+        val impStimLabel = ( if (impStim > 0) Constants.KGRN else if (impStim < 0) Constants.KRED else Constants.KNRM ) + abs(impStim).toString().padStart(6, ' ')
+
+        //TODO: move label to Astro folder
+        return Constants.KBYEL + Constants.SYM_IMPROVEMENT + chartLabel + ":" + impStimLabel
     }
 /*
     fun getRomanticSumLine(valueCurChart : ValueChart, chartLabel : String) : String {
