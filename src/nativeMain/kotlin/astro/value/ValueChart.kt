@@ -21,8 +21,6 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
     fun getModValue() = Value(getValueAspects().map { it.getModValue().positive }.reduce { acc, modPositive -> acc + modPositive },
         getValueAspects().map { it.getModValue().negative }.reduce { acc, modNegative -> acc + modNegative } )
 
-    //TODO: getBaseModNet()
-
     fun getValueAspects() : List<ValueAspect> {
         val returnList = mutableListOf<ValueAspect>()
 

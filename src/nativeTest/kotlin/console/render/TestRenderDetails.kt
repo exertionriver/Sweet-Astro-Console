@@ -1,5 +1,6 @@
 package console.render
 
+import astro.render.RenderAspect
 import astro.state.*
 import astro.value.ValueChart
 import platform.linux.CONTINUE
@@ -17,7 +18,6 @@ object TestRenderDetails {
             AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
 
         println("details column width:" + RenderDetails.getDetailsColumnWidth() )
-        println("details end column width:" + RenderDetails.getDetailsEndColumnWidth() )
 
         //got up to 62, should test higher
         val detailsSize = refNatalChart.getValueAspects().size
@@ -93,11 +93,13 @@ object TestRenderDetails {
     }
 
     @Test
-    fun testSelectiveCurDetails() {
+    fun testProfileDetails() {
         val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_SELECTIVE), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+
+        println("no analysis details:")
 
         (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
             val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, refNatalChart)
@@ -114,4 +116,29 @@ object TestRenderDetails {
 
     }
 
+    @Test
+    fun testProfileRomanticDetails() {
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+
+        val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.ROMANTIC_ANALYSIS)
+
+        println("romantic analysis aspects:")
+        refNatalChart.getValueAspects().forEach { println(RenderAspect(it).getAspectValueRenderLabel() + "," + it.getBaseModNetValue() + ":" + it) }
+
+        println("romantic analysis details:")
+        (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
+            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, refNatalChart)
+            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, refNatalChart)
+            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, refNatalChart)
+            println(summaryDataLineFirstCol + "|" + summaryDataLineFirstCol.length
+                    + summaryDataLineSecondCol + "|" + summaryDataLineSecondCol.length
+                    + summaryDataLineThirdCol + "|" + summaryDataLineThirdCol.length)
+            val renderIdxFirstCol = idx
+            val renderIdxSecondCol = renderIdxFirstCol + RenderDetails.detailsFirstColMaxIdx - 1
+            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
+
+        }
+
+    }
 }

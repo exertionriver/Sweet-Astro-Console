@@ -4,20 +4,29 @@ import astro.base.*
 import astro.state.AnalysisState
 import astro.state.ChartState
 import astro.state.StateAspect
+import astro.value.ValueAspect.Companion.valueAspectReduceBase
 
 import kotlin.math.abs
 
 data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) {
 
-    fun getBaseValue() = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveBaseValue() / 2, getNegativeBaseValue() / 2) else Value(getPositiveBaseValue(), getNegativeBaseValue() )
-    fun getModValue() = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveModValue() / 2, getNegativeModValue() / 2) else Value(getPositiveModValue(), getNegativeModValue())
+    val baseValue = getAspectBaseValue()
+    val modValue = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveModValue() / 2, getNegativeModValue() / 2) else Value(getPositiveModValue(), getNegativeModValue())
+
+    fun getBaseValue() = baseValue
+    fun getModValue() = modValue
+
+    fun getPositiveBaseValue() = baseValue.positive
+    fun getNegativeBaseValue() = baseValue.negative
 
     fun getBaseModNetValue() = Value(getBaseValue().positive + getModValue().positive, getBaseValue().negative + getModValue().negative)
 
     fun getAspectModifier() = when (analysisState) {
         AnalysisState.ROMANTIC_ANALYSIS -> setRomanticModifier()
+        AnalysisState.CHARACTER_ANALYSIS -> setCharacterModifier()
         else -> 0
     }
+
     fun getSignFirstModifier() = when (analysisState) {
         AnalysisState.ELEMENT_ANALYSIS -> getElementModifier(stateAspect.signFirst.getElement()).toInt()
         AnalysisState.MODE_ANALYSIS -> getModeModifier(stateAspect.signFirst.getMode()).toInt()
@@ -44,6 +53,10 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
             (   (   ( (it.aspectCelestialFirst == stateAspect.aspectCelestialFirst) && (it.aspectCelestialSecond == stateAspect.aspectCelestialSecond) ) ||
                     ( (it.aspectCelestialFirst == stateAspect.aspectCelestialSecond) && (it.aspectCelestialSecond == stateAspect.aspectCelestialFirst) ) )
                     && (it.aspectAngle == stateAspect.aspectAngle) )}?.orb?.toInt() ?: 0
+    }
+
+    private fun setCharacterModifier() : Int {
+        return 0
     }
 
     private fun getElementModifier(signElement : SignElement) : Double {
@@ -88,8 +101,8 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
         modPos += when {
             (getBaseValue().getNet() > 0) -> when {
-                (getAspectModifier() > 0) -> (getBaseValue().positive * abs(getAspectModifier()) * .125).toInt()
-                (getAspectModifier() < 0) -> (getBaseValue().positive * -abs(getAspectModifier()) * .125).toInt()
+                (getAspectModifier() > 0) -> (getBaseValue().positive * abs(getAspectModifier()) * .25).toInt()
+                (getAspectModifier() < 0) -> (getBaseValue().positive * -abs(getAspectModifier()) * .25).toInt()
                 else -> 0
             }
             else -> 0
@@ -136,8 +149,8 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
         modNeg += when {
             (getBaseValue().getNet() < 0) -> when {
-                (getAspectModifier() > 0) -> (getBaseValue().negative * -abs(getAspectModifier()) * .125).toInt()
-                (getAspectModifier() < 0) -> (getBaseValue().negative * abs(getAspectModifier()) * .125).toInt()
+                (getAspectModifier() > 0) -> (getBaseValue().negative * -abs(getAspectModifier()) * .25).toInt()
+                (getAspectModifier() < 0) -> (getBaseValue().negative * abs(getAspectModifier()) * .25).toInt()
                 else -> 0
             }
             else -> 0
@@ -178,49 +191,45 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
         return modNeg
     }
 
-    fun getPositiveBaseValue() : Int {
+    private fun getAspectBaseValue() : Value {
 
-        //hard aspects to sun / moon midpoint are positive
-        return if ( (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT
-                || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) && (
-                (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION)
-                        || (stateAspect.aspectAngle.getAspectType() == AspectType.OPPOSITION)
-                        || (stateAspect.aspectAngle.getAspectType() == AspectType.SEMISQUARE)
-                        || (stateAspect.aspectAngle.getAspectType() == AspectType.SQUARE) ) )
-            getAspectBaseValue()
-        else if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isPositive()) getAspectBaseValue()
-        else 0
-    }
-
-    fun getNegativeBaseValue() : Int {
-
-//      https://en.wikipedia.org/wiki/Astrological_aspect#Conjunction
-//      In particular, conjunctions involving the Sun, Venus, and/or Jupiter, in any of the three possible conjunction combinations, are
-//      considered highly favourable, while conjunctions involving the Moon, Mars, and/or Saturn, again in any of the three possible
-//      conjunction combinations, are considered highly unfavourable.
-        return if ( (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION) &&
-                    (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MOON && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
-                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MARS && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
-                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SATURN && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS) ) )
-            -getAspectBaseValue()
-        else if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isPositive()) 0
-        else -getAspectBaseValue()
-    }
-
-    private fun getAspectBaseValue() : Int {
-
-        if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isNeutral()) return 0
+        if (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isNeutral()) return Value(0, 0)
 
         val weightFirst = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
         val weightSecond = ValueAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getWeight()
         val weightAspect = stateAspect.aspectOverlayState.getAspectAngleOrb(stateAspect.aspectAngle)
 
         //full weightAspect at orb = 0, down to 0 weightAspect at the cusp of the orb
-        val weightOrbAspect = ((60 * weightAspect) - (60 * stateAspect.orb)) / (60 * weightAspect);
+        val weightOrbAspect = ((60 * weightAspect) - (60 * stateAspect.orb)) / (60 * weightAspect)
 
-//      debugging with lldb shows rounding error between AstroSWE and SAC -- e.g. aspectWeight for 4.9 in SAC is 4.89999999998 in AstroSWE, leading to rounding diffs
-//        println (" orb)" + orb + ": 1W)" + weightFirst + " 2W)" + weightSecond + " aspectW)" + weightAspect + " orbAspectW)" + weightOrbAspect + " value)" + aspectValue )
-        return ( (weightFirst * weightSecond) / 2 * weightAspect * weightOrbAspect).toInt()
+        //      debugging with lldb shows rounding error between AstroSWE and SAC -- e.g. aspectWeight for 4.9 in SAC is 4.89999999998 in AstroSWE, leading to rounding diffs
+        var aspectValue = ( (weightFirst * weightSecond) / 2 * weightAspect * weightOrbAspect).toInt()
+
+        //  halve for synastry chart
+        if (chartState == ChartState.SYNASTRY_CHART) aspectValue /= 2
+
+//        println (" orb)" + stateAspect.orb + ": 1W)" + weightFirst + " 2W)" + weightSecond + " aspectW)" + weightAspect + " orbAspectW)" + weightOrbAspect + " value)" + aspectValue )
+
+        return when {
+            //hard aspects to sun / moon midpoint are positive
+            ( (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT
+                    || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SUN_MOON_MIDPOINT) && (
+                    (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION)
+                            || (stateAspect.aspectAngle.getAspectType() == AspectType.OPPOSITION)
+                            || (stateAspect.aspectAngle.getAspectType() == AspectType.SEMISQUARE)
+                            || (stateAspect.aspectAngle.getAspectType() == AspectType.SQUARE) ) ) -> Value(aspectValue, 0)
+            //      https://en.wikipedia.org/wiki/Astrological_aspect#Conjunction
+            //      In particular, conjunctions involving the Sun, Venus, and/or Jupiter, in any of the three possible conjunction combinations, are
+            //      considered highly favourable, while conjunctions involving the Moon, Mars, and/or Saturn, again in any of the three possible
+            //      conjunction combinations, are considered highly unfavourable.
+            ( (stateAspect.aspectAngle.getAspectType() == AspectType.CONJUNCTION) &&
+                    (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MOON && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
+                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_MARS && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_SATURN) )
+                    || (stateAspect.aspectCelestialFirst == AspectCelestial.ASPECT_SATURN && (stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MOON || stateAspect.aspectCelestialSecond == AspectCelestial.ASPECT_MARS) ) ) -> Value(0, -aspectValue)
+            (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isPositive()) -> Value(aspectValue, 0)
+            (ValueAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.isNegative()) -> Value(0, -aspectValue)
+            else -> Value(0, 0)
+        }
     }
 
     override fun toString() = "ValueAspect($stateAspect $analysisState) : baseValue:${getBaseValue()} modValue:${getModValue()} AspectMod:${getAspectModifier()} signFirstMod:${getSignFirstModifier()} signSecondMod:${getSignSecondModifier()} aspectCelFirstMod:${getAspectCelestialFirstModifier()} aspectCelSecondMod:${getAspectCelestialSecondModifier()}"
@@ -229,6 +238,41 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
         fun getEmptyAspect(firstAspectCelestialOverride : AspectCelestial = AspectCelestial.ASPECT_CELESTIAL_NONE,
                            secondAspectCelestialOverride : AspectCelestial = AspectCelestial.ASPECT_CELESTIAL_NONE) = ValueAspect(StateAspect.getEmptyAspect())
+
+        fun List<ValueAspect>.valueAspectReduceBase() : Value {
+            val pos = this.sumOf { it.getPositiveBaseValue() }
+            val neg = this.sumOf { it.getNegativeBaseValue() }
+
+            return Value(pos, neg)
+        }
+
+        fun List<ValueAspect>.valueAspectReduceBaseModNet() : Value {
+
+            var pos = 0
+            var neg = 0
+
+            this.forEach {
+                val modNetValue = it.getBaseModNetValue()
+                pos += modNetValue.positive
+                neg += modNetValue.negative
+            }
+
+            return Value(pos, neg)
+        }
+
+        fun List<StateAspect>.stateAspectReduceBase(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
+            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveBaseValue() }
+            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeBaseValue() }
+
+            return Value(pos, neg)
+        }
+
+        fun List<StateAspect>.stateAspectReduceMod(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
+            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveModValue() }
+            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeModValue() }
+
+            return Value(pos, neg)
+        }
     }
 
 }

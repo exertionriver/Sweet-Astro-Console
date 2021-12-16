@@ -1,27 +1,22 @@
 package console.render
 
+import Constants.LABEL_SPACE
 import astro.base.CelestialSnapshot
 import astro.render.RenderAspect
 import astro.state.AnalysisState
 import astro.state.ChartState
 import astro.state.DetailsState
-import astro.state.StateChart
 import astro.value.ValueAspect
 import astro.value.ValueChart
-import console.state.ConsoleAnalysisState
-import console.state.ConsoleChartState
-import console.state.ConsoleDetailsState
+import console.render.RenderDetails.getDetailMod
 import kotlinx.cinterop.*
-import kotlinx.cinterop.nativeHeap.alloc
 import platform.posix.printf
 import platform.posix.size_tVar
 import platform.posix.snprintf
-import profile.base.Profile
 
 object RenderDetails {
 
     val detailsFirstColMaxIdx = 19
-    val dataColumnEndWidth = getDetailsEndColumnWidth()
 
     fun renderDetailsData(renderIdx: Int, curChart: ValueChart) {
         printf("%s%s%s", prepareDetailsDataFirstCol(renderIdx, curChart)
@@ -35,8 +30,6 @@ object RenderDetails {
         detailsDataLineFirstColSize.value = 128u
         val detailsDataLineFirstCol = allocArray<ByteVar>(detailsDataLineFirstColSize.value.toInt())
 
-        val detailsColumnWidth = getDetailsColumnWidth(curChart.analysisState)
-
         val dataIdxMax = curChart.getValueAspects().size - 1
 
         val dataIdxFirstCol = renderIdx - 1
@@ -49,7 +42,7 @@ object RenderDetails {
                 if (dataIdxMax > dataIdxFirstCol) {
                     snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value, "%s", getTopFirstColBorderShape())
                     } else {
-                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth, "")
+                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", getDetailsColumnWidth(), "")
                     }
             }
             else -> {
@@ -58,14 +51,15 @@ object RenderDetails {
 
                     if (renderIdx < detailsFirstColMaxIdx) {
                         val firstColumnAspect = curChart.getValueAspects()[dataIdxFirstCol]
-                        val firstColumnData = firstColBorder + " " + idxSpace + dataIdxFirstCol.toString() + ":" + RenderAspect(firstColumnAspect).getRenderLabel()
+                        val firstColumnData = firstColBorder + " " + idxSpace + dataIdxFirstCol.toString() + ":" +
+                            RenderAspect(firstColumnAspect).getRenderLabel() + firstColumnAspect.getDetailMod(curChart.analysisState)
 
                         snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%s", firstColumnData)
                     } else if (renderIdx == detailsFirstColMaxIdx) {
-                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth - 1, "")
+                        snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", getDetailsColumnWidth(), "")
                     } //else summary lines formatting
                 } else {
-                    snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", detailsColumnWidth, "")
+                    snprintf(detailsDataLineFirstCol, detailsDataLineFirstColSize.value,"%*s", getDetailsColumnWidth(), "")
                 }
             }
         }
@@ -79,8 +73,6 @@ object RenderDetails {
         detailsDataLineSecondColSize.value = 128u
         val detailsDataLineSecondCol = allocArray<ByteVar>(detailsDataLineSecondColSize.value.toInt())
 
-        val detailsColumnWidth = getDetailsColumnWidth(curChart.analysisState)
-
         val dataIdxMax = curChart.getValueAspects().size - 1
 
         val dataIdxFirstCol = renderIdx - 1
@@ -92,25 +84,28 @@ object RenderDetails {
         when {
             (renderIdx == 0) -> {
                 if (dataIdxMax > dataIdxSecondCol) {
-                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s%s", detailsColumnWidth - getTopFirstColBorderShapeLength(), "", getTopAddlColBordersShape())
+                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s%s"
+                        , getDetailsColumnWidth() - getTopFirstColBorderShapeLength() + 1, ""
+                        , getTopAddlColBordersShape())
 
                 } else {
-                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s", detailsColumnWidth, "")
+                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s", getDetailsColumnWidth(), "")
                 }
             }
             else -> {
                 if (dataIdxMax >= dataIdxFirstCol) {
                     if (dataIdxMax >= dataIdxSecondCol) {
                         val secondColumnAspect = curChart.getValueAspects()[dataIdxSecondCol]
-                        val secondColumnData = secondColBorder + " " + dataIdxSecondCol.toString() + ":" + RenderAspect(secondColumnAspect).getRenderLabel()
+                        val secondColumnData = secondColBorder + " " + dataIdxSecondCol.toString() + ":" +
+                                RenderAspect(secondColumnAspect).getRenderLabel() + secondColumnAspect.getDetailMod(curChart.analysisState)
 
                         snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%s", secondColumnData)
 
                     } else {
-                        snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",detailsColumnWidth, "")
+                        snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",getDetailsColumnWidth(), "")
                     }
                 } else {
-                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",detailsColumnWidth, "")
+                    snprintf(detailsDataLineSecondCol, detailsDataLineSecondColSize.value,"%*s",getDetailsColumnWidth(), "")
                 }
            }
         }
@@ -123,8 +118,6 @@ object RenderDetails {
         val detailsDataLineThirdColSize = alloc<size_tVar>()
         detailsDataLineThirdColSize.value = 128u
         val detailsDataLineThirdCol = allocArray<ByteVar>(detailsDataLineThirdColSize.value.toInt())
-
-        val detailsColumnWidth = getDetailsColumnWidth(curChart.analysisState)
 
         val dataIdxMax = curChart.getValueAspects().size - 1
 
@@ -139,10 +132,11 @@ object RenderDetails {
             (renderIdx == 0) -> {
                 if (dataIdxMax > dataIdxThirdCol) {
                     snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s%s%*s"
-                        , detailsColumnWidth - getTopAddlColBorderShapeLength(), "", getTopAddlColBordersShape()
-                        , detailsColumnWidth, "")
+                        , getDetailsColumnWidth() - getTopAddlColBorderShapeLength() + 1, ""
+                        , getTopAddlColBordersShape()
+                        , getDetailsColumnWidth(), "")
                 } else {
-                    snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
+                    snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", getDetailsColumnWidth() * 2, "")
                 }
             }
             else -> {
@@ -150,21 +144,22 @@ object RenderDetails {
                     if (dataIdxMax >= dataIdxSecondCol) {
                         if (dataIdxMax >= dataIdxThirdCol) {
                             val thirdColumnAspect = curChart.getValueAspects()[dataIdxThirdCol]
-                            val thirdColumnData = thirdColBorder + " " + dataIdxThirdCol.toString() + ":" + RenderAspect(thirdColumnAspect).getRenderLabel()
+                            val thirdColumnData = thirdColBorder + " " + dataIdxThirdCol.toString() + ":" +
+                                    RenderAspect(thirdColumnAspect).getRenderLabel() + thirdColumnAspect.getDetailMod(curChart.analysisState)
 
                             snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%s%*s"
-                                , thirdColumnData, detailsColumnWidth, "")
+                                , thirdColumnData, getDetailsColumnWidth(), "")
                         } else {
                             //width plus label plus column space
-                            snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
+                            snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", getDetailsColumnWidth() * 2, "")
                         }
                     } else {
                         //width plus label plus column space
-                        snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
+                        snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", getDetailsColumnWidth() * 2, "")
                     }
                 } else {
                     //width plus label plus column space
-                    snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", detailsColumnWidth * 2, "")
+                    snprintf(detailsDataLineThirdCol, detailsDataLineThirdColSize.value,"%*s", getDetailsColumnWidth() * 2, "")
                 }
             }
         }
@@ -188,7 +183,7 @@ object RenderDetails {
             if (curDetailsState == DetailsState.SHOW_DETAILS)
                 renderDetailsData(celestialRenderIdx, curChart)
             else
-                printf("%*s", getDetailsColumnWidth(curAnalysisState) * 4, "")
+                printf("%*s", getDetailsColumnWidth() * 4, "")
 
             printf("\n")
         }
@@ -218,22 +213,20 @@ object RenderDetails {
            if (curDetailsState == DetailsState.SHOW_DETAILS)
                 renderDetailsData(houseAspectRenderIdx + RenderConsole.celestialsRenderMaxIdx + 1, curChart)
             else
-                printf("%*s", getDetailsColumnWidth(curAnalysisState) * 3, "")
+                printf("%*s", getDetailsColumnWidth() * 3, "")
 
             printf("\n")
         }
     }
 
-    fun getDetailsDataColumnWidth(analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Int {
-        return RenderAspect.getLabelLength(analysisState)
-    }
+    fun getDetailsColumnWidth() = RenderAspect.getLabelLength() + ":N_a".length //label plus mod length
 
-    fun getDetailsColumnWidth(analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Int {
-        return getDetailsDataColumnWidth(analysisState) + getDetailsEndColumnWidth()
-    }
-
-    fun getDetailsEndColumnWidth() : Int {
-        return 4
+    fun ValueAspect.getDetailMod(analysisState: AnalysisState) : String {
+        return when(analysisState) {
+            AnalysisState.CHARACTER_ANALYSIS -> ":Chr"
+            AnalysisState.ROMANTIC_ANALYSIS -> RenderAspect(this).getRenderRomanticModLabel()
+            else -> LABEL_SPACE.padStart(4, ' ')
+        }
     }
 
     fun getBorderColor(idx : Int) : String {

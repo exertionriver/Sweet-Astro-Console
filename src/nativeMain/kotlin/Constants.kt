@@ -131,6 +131,7 @@ object Constants {
     const val KMAG = "\u001B[35m"
     const val KCYN = "\u001B[36m"
     const val KWHT = "\u001B[37m"
+    const val KGRN_BG = "\u001B[42m"
     const val KBBLK = "\u001B[90m"
     const val KBRED = "\u001B[91m"
     const val KBGRN = "\u001B[92m"
@@ -141,8 +142,10 @@ object Constants {
     const val KBWHT = "\u001B[97m"
 
     const val TZ_EDT = (-4)
+    const val TZ_EST = (-5)
     const val TZ_CDT = (-5)
     const val TZ_CST = (-6)
+    const val TZ_MDT = (-6)
     const val TZ_MST = (-7)
     //-97.75, 30.2667 : astro.com long/lat for ATX
     const val LON_ATX = (-97.7431)

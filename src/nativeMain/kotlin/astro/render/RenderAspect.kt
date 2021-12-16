@@ -2,6 +2,9 @@ package astro.render
 
 import Constants.LABEL_SPACE
 import astro.base.AspectCelestial
+import astro.render.RenderValue.Companion.negativeLabel
+import astro.render.RenderValue.Companion.neutralLabel
+import astro.render.RenderValue.Companion.positiveLabel
 import astro.state.AnalysisState
 import astro.value.ValueAspect
 import kotlin.math.abs
@@ -20,8 +23,8 @@ data class RenderAspect(val valueAspect : ValueAspect) {
             (valueAspect.getPositiveBaseValue() > 0) && (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
             (valueAspect.getNegativeBaseValue() < 0) && (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
             (valueAspect.getBaseValue().getNet() != 0) && (valueAspect.getBaseValue().getNet() == 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().revLabel()
-            (valueAspect.getPositiveModValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
-            (valueAspect.getNegativeModValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
+            (valueAspect.getPositiveBaseValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
+            (valueAspect.getNegativeBaseValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
             else -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
         }
     }
@@ -36,8 +39,8 @@ data class RenderAspect(val valueAspect : ValueAspect) {
             (valueAspect.getPositiveBaseValue() > 0) && (valueAspect.getNegativeModValue() < 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').revLabel()
             (valueAspect.getNegativeBaseValue() < 0) && (valueAspect.getPositiveModValue() > 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').revLabel()
             (valueAspect.getBaseValue().getNet() != 0) && (valueAspect.getBaseValue().getNet() == 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').revLabel()
-            (valueAspect.getPositiveModValue() > 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').positiveLabel()
-            (valueAspect.getNegativeModValue() < 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').negativeLabel()
+            (valueAspect.getPositiveBaseValue() > 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').positiveLabel()
+            (valueAspect.getNegativeBaseValue() < 0) -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').negativeLabel()
             else -> abs(valueAspect.getBaseModNetValue().getNet()).toString().padStart(3, ' ').neutralLabel()
         }
     }
@@ -53,38 +56,50 @@ data class RenderAspect(val valueAspect : ValueAspect) {
                 RenderSign.getElementLabel(stateAspect.signSecond) + LABEL_SPACE +
                 RenderAspectCelestial.fromName(stateAspect.aspectCelestialSecond.toString())!!.getLabel() + secondAspectSpace
 
-        return if (valueAspect.analysisState == AnalysisState.ROMANTIC_ANALYSIS)
-            commonLabel //+ getRomModLabel(analysisState, valueAspect.aspectModifier) +  "=" + getLabel(aspect.aspectValue, AspectValue.NET_VALUE, aspect.romanticModifier)
-        else
-            commonLabel + "=" + getAspectValueRenderLabel()
+        return commonLabel + "=" + getAspectValueRenderLabel()
+
+   }
+
+    fun getRenderRomanticModLabel() : String {
+        if (valueAspect.analysisState != AnalysisState.ROMANTIC_ANALYSIS) return Constants.KMAG + "(**)"
+
+        return when {
+            (valueAspect.getAspectModifier() > 0) -> when {
+                (valueAspect.getAspectModifier() == 4) -> Constants.KBBLU + "(+4)"
+                else -> Constants.KGRN + "(+${valueAspect.getAspectModifier()})"
+            }
+            (valueAspect.getAspectModifier() < 0) -> when {
+                (valueAspect.getAspectModifier() == -4) -> Constants.KBRED + "(-4)"
+                else -> Constants.KRED + "(${valueAspect.getAspectModifier()})"
+            }
+            else -> LABEL_SPACE.padStart(4, ' ')
+        } + Constants.KNRM
     }
 
+    fun getRenderCharacterModLabel() : String {
+        if (valueAspect.analysisState != AnalysisState.CHARACTER_ANALYSIS) return Constants.KMAG + "(**)"
+
+        return when {
+            (valueAspect.getAspectModifier() > 0) -> when {
+                (valueAspect.getAspectModifier() == 4) -> Constants.KBBLU + "(+4)"
+                else -> Constants.KGRN + "(+${valueAspect.getAspectModifier()})"
+            }
+            (valueAspect.getAspectModifier() < 0) -> when {
+                (valueAspect.getAspectModifier() == -4) -> Constants.KBRED + "(-4)"
+                else -> Constants.KRED + "(${valueAspect.getAspectModifier()})"
+            }
+            else -> LABEL_SPACE.padStart(4, ' ')
+        } + Constants.KNRM
+    }
     companion object {
 
-        fun getEmptyAspect() = RenderAspect(
-            ValueAspect.getEmptyAspect()
-        )
-
-        fun getAspectNoneMarkerLabel() : String = Constants.KYEL + RenderAspectType.ASPECT_NONE.getLabel() + Constants.KNRM
-
-        fun getLabelLength(analysisState: AnalysisState) : Int {
-            return when (analysisState) {
-                AnalysisState.ROMANTIC_ANALYSIS -> getLabelLength() + 5 // for "(-x) "
-                else -> getLabelLength()
-            }
-        }
-
-        fun String.positiveLabel() : String = Constants.KGRN + this + Constants.KNRM
-        fun String.neutralLabel() : String = Constants.KNRM + this + Constants.KNRM
-        fun String.negativeLabel() : String = Constants.KRED + this + Constants.KNRM
         //modifier flips value
         fun String.revLabel() : String = Constants.KYEL + this + Constants.KNRM
 
+        fun getAspectNoneMarkerLabel() : String = Constants.KYEL + RenderAspectType.ASPECT_NONE.getLabel() + Constants.KNRM
+
         fun getLabelLength() : Int {
-            return 15 + VALUE_LABEL_LENGTH //default Sign + Celestial + Aspect + Sign + Celestial = 5-char value
+            return 23 //default Sign + Celestial + Aspect + Sign + Celestial + value + space for mod
         }
-
-        const val VALUE_LABEL_LENGTH = 5
-
     }
 }

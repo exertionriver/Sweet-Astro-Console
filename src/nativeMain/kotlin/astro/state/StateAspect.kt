@@ -20,6 +20,8 @@ data class StateAspect(val signFirst : Sign
     , val aspectOverlayState : AspectOverlayState
     ) {
 
+    fun getStateBaseAspect() = StateBaseAspect(this.aspectCelestialFirst, this.aspectCelestialSecond, this.aspectAngle.getAspectType())
+
     //calcOrb constructor
     constructor(
         signFirst : Sign
@@ -68,7 +70,7 @@ data class StateAspect(val signFirst : Sign
         , aspectOverlayState
     )
 
-    override fun toString() = "StateAspect($signFirst $aspectCelestialFirst $aspectAngle $signSecond $aspectCelestialSecond $aspectAngle $orb $aspectsState $timeAspectsState $aspectOverlayState)"
+    override fun toString() = "StateAspect($signFirst $aspectCelestialFirst $signSecond $aspectCelestialSecond $aspectAngle $orb $aspectsState $timeAspectsState $aspectOverlayState)"
 
     companion object{
 
