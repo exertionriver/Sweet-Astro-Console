@@ -149,15 +149,28 @@ class ConsoleState {
 
             }
 
-            //if composite profile was made, set refSnapshot to that snapshot
-            refSnapshot = compSnapshot
-
             //prep for possible next input pause
             prevChart = curChart
             prevRefNatalChart = curRefNatalChart
             prevSynNatalChart = curSynNatalChart
 
-            curValueChart = ValueChart(curChart, curAnalysisState)
+            curValueChart = if (curAnalysisState == AnalysisState.CHARACTER_ANALYSIS)
+                when (curChart.chartState) {
+                    ChartState.COMPOSITE_CHART -> {
+                        val synChart = StateChart(refSnapshot, synSnapshot, ChartState.SYNASTRY_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState.getToggledState());
+                        ValueChart(curChart.chartState, synChart, curChart, curRefNatalChart, curSynNatalChart)
+                    }
+                    else -> { //ChartState.SYNASTRY_CHART
+                        val compChart = StateChart(refSnapshot, synSnapshot, ChartState.COMPOSITE_CHART, curAspectsState, curTimeAspectsState, curAspectOverlayState.getToggledState());
+                        ValueChart(curChart.chartState, curChart, compChart, curRefNatalChart, curSynNatalChart)
+                    }
+                }
+            else
+                ValueChart(curChart, curAnalysisState)
+
+            //if composite profile was made, set refSnapshot to that snapshot
+            refSnapshot = compSnapshot
+
             curRefNatalValueChart = ValueChart(curRefNatalChart, curAnalysisState)
             curSynNatalValueChart = ValueChart(curSynNatalChart, curAnalysisState)
 

@@ -1,7 +1,6 @@
 package astro.render
 
 import astro.render.RenderValue.Companion.valueDivider
-import astro.state.AnalysisState
 import astro.state.ChartState
 import astro.value.ValueChart
 import console.render.RenderState
@@ -13,7 +12,7 @@ object RenderChartState {
     fun String.chartLabel() : String = this + Constants.KNRM + ":"
     fun String.impChartLabel() : String = Constants.KBYEL + Constants.SYM_IMPROVEMENT + this + Constants.KNRM + ":"
 
-    fun getRenderChartSumLabel(chartState : ChartState, colorString : String) : String =
+    fun getChartSumLabel(chartState : ChartState, colorString : String) : String =
         RenderState.getNestedLabelString(
             Constants.KCYN,
             Constants.SYM_SIGMA,

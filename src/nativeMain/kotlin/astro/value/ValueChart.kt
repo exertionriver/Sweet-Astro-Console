@@ -2,6 +2,8 @@ package astro.value
 
 import astro.base.*
 import astro.state.*
+import astro.state.ChartStateType.Companion.encodeChartStateType
+import astro.state.StateBaseAspect.Companion.stateBaseAspects
 import swe.DegMidp
 import console.state.*
 import kotlin.math.abs
@@ -14,6 +16,10 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
     constructor(stateChartAspects : Array<StateAspect>, chartState : ChartState, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : this (getAspectsStateAspects(stateChartAspects, chartState, analysisState), analysisState)
 
     constructor(stateChart : StateChart, analysisState: AnalysisState) : this (stateChart.getStateAspects().toTypedArray(), stateChart.chartState, analysisState)
+
+    //analysisState = CHARACTER_ANALYSIS
+    constructor(chartState : ChartState, synChart : StateChart, compChart : StateChart, refNatalChart : StateChart, synNatalChart : StateChart) :
+            this (getCharacterAspectsStateAspects(chartState, synChart, compChart, refNatalChart, synNatalChart), AnalysisState.CHARACTER_ANALYSIS)
 
     fun getBaseValue() = Value(getValueAspects().map { it.getBaseValue().positive }.reduce { acc, basePositive -> acc + basePositive },
             getValueAspects().map { it.getBaseValue().negative }.reduce { acc, baseNegative -> acc + baseNegative } )
@@ -38,6 +44,49 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
             val returnAspects : MutableList<ValueAspect> = ArrayList()
 
             stateChartAspects.forEach { returnAspects.add(ValueAspect(it, chartState, analysisState)) }
+
+            return returnAspects.toTypedArray()
+        }
+
+        fun getCharacterAspectsStateAspects(chartState : ChartState, synChart : StateChart, compChart : StateChart, refNatalChart : StateChart, synNatalChart : StateChart) : Array<ValueAspect> {
+
+            if (chartState == ChartState.NATAL_CHART) return getAspectsStateAspects(refNatalChart.getStateAspects().toTypedArray(), chartState, AnalysisState.CHARACTER_ANALYSIS)
+
+            val returnAspects : MutableList<ValueAspect> = ArrayList()
+
+            val synAspects = synChart.getStateAspects()
+            val compAspects = compChart.getStateAspects()
+            val refNatalBaseAspects = refNatalChart.getStateAspects().stateBaseAspects()
+            val synNatalBaseAspects = synNatalChart.getStateAspects().stateBaseAspects()
+
+            if (chartState == ChartState.COMPOSITE_CHART) {
+                val synBaseAspects = synAspects.stateBaseAspects()
+
+                compAspects.forEach {
+                    val baseAspect = it.getStateBaseAspect()
+
+                    val commonAspectCharts = mutableListOf<ChartStateType>()
+
+                    if ( synBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYNASTRY_CHART)
+                    if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+                    if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+
+                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType())) }
+
+            } else { // (chartState == ChartState.SYNASTRY_CHART)
+                val compBaseAspects = compAspects.stateBaseAspects()
+
+                synAspects.forEach {
+                    val baseAspect = it.getStateBaseAspect()
+
+                    val commonAspectCharts = mutableListOf<ChartStateType>()
+
+                    if ( compBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.COMPOSITE_CHART)
+                    if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+                    if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+
+                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType())) }
+            }
 
             return returnAspects.toTypedArray()
         }

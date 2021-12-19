@@ -8,13 +8,12 @@ import astro.value.ValueAspect.Companion.valueAspectReduceBase
 
 import kotlin.math.abs
 
-data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) {
+data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS, val characterModifier: Int = 0) {
 
     val baseValue = getAspectBaseValue()
-    val modValue = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveModValue() / 2, getNegativeModValue() / 2) else Value(getPositiveModValue(), getNegativeModValue())
 
     fun getBaseValue() = baseValue
-    fun getModValue() = modValue
+    fun getModValue() = if (chartState == ChartState.SYNASTRY_CHART) Value(getPositiveModValue() / 2, getNegativeModValue() / 2) else Value(getPositiveModValue(), getNegativeModValue())
 
     fun getPositiveBaseValue() = baseValue.positive
     fun getNegativeBaseValue() = baseValue.negative
@@ -22,8 +21,8 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
     fun getBaseModNetValue() = Value(getBaseValue().positive + getModValue().positive, getBaseValue().negative + getModValue().negative)
 
     fun getAspectModifier() = when (analysisState) {
-        AnalysisState.ROMANTIC_ANALYSIS -> setRomanticModifier()
-        AnalysisState.CHARACTER_ANALYSIS -> setCharacterModifier()
+        AnalysisState.ROMANTIC_ANALYSIS -> getRomanticModifier()
+        AnalysisState.CHARACTER_ANALYSIS -> getCharacterModifier()
         else -> 0
     }
 
@@ -46,7 +45,7 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
         else -> 0
     }
 
-    private fun setRomanticModifier() : Int {
+    private fun getRomanticModifier() : Int {
 
         //romMod is stored as 'orb' in baseAspect
         return ValueRomanticAspects.getRomanticAspects().firstOrNull() {
@@ -55,9 +54,7 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
                     && (it.aspectAngle == stateAspect.aspectAngle) )}?.orb?.toInt() ?: 0
     }
 
-    private fun setCharacterModifier() : Int {
-        return 0
-    }
+    private fun getCharacterModifier() = characterModifier
 
     private fun getElementModifier(signElement : SignElement) : Double {
         val aspectCelestialFirstWeight = ValueAspectCelestial.fromName(stateAspect.aspectCelestialFirst.toString())!!.getWeight()
@@ -100,13 +97,11 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
         var modPos = 0
 
         modPos += when {
-            (getBaseValue().getNet() > 0) -> when {
-                (getAspectModifier() > 0) -> (getBaseValue().positive * abs(getAspectModifier()) * .25).toInt()
-                (getAspectModifier() < 0) -> (getBaseValue().positive * -abs(getAspectModifier()) * .25).toInt()
-                else -> 0
-            }
+            (getAspectModifier() > 0) -> (getBaseValue().positive * abs(getAspectModifier()) * .25).toInt()
+            (getAspectModifier() < 0) -> (getBaseValue().positive * -abs(getAspectModifier()) * .25).toInt()
             else -> 0
         }
+
         modPos += when {
             (getBaseValue().getNet() > 0) -> when {
                 (getSignFirstModifier() > 0) -> (getBaseValue().positive * abs(getSignFirstModifier()) * .125).toInt()
@@ -148,13 +143,11 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
         var modNeg = 0
 
         modNeg += when {
-            (getBaseValue().getNet() < 0) -> when {
-                (getAspectModifier() > 0) -> (getBaseValue().negative * -abs(getAspectModifier()) * .25).toInt()
-                (getAspectModifier() < 0) -> (getBaseValue().negative * abs(getAspectModifier()) * .25).toInt()
-                else -> 0
-            }
+            (getAspectModifier() > 0) -> (getBaseValue().negative * -abs(getAspectModifier()) * .25).toInt()
+            (getAspectModifier() < 0) -> (getBaseValue().negative * abs(getAspectModifier()) * .25).toInt()
             else -> 0
         }
+
         modNeg += when {
             (getBaseValue().getNet() < 0) -> when {
                 (getSignFirstModifier() > 0) -> (getBaseValue().negative * -abs(getSignFirstModifier()) * .125).toInt()

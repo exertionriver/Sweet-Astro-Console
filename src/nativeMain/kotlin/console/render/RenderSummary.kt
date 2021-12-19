@@ -42,73 +42,90 @@ object RenderSummary {
 
         val summaryDataLine = allocArray<ByteVar>(summaryDataLineSize.value.toInt())
 
+        var returnString = ""
+
         when {
             (renderIdx == summaryHeaderIdx) -> {
                 snprintf(summaryDataLine, summaryDataLineSize.value, "%s"
                     , getTopSummaryColBorderShape(curSummaryColumnWidth)
                 )
+
+                returnString = summaryDataLine.toKString()
             }
             (renderIdx == baseCurChartSummaryIdx) -> {
                 val baseValue = curChart.getBaseValue()
 
                 snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , RenderChartState.getRenderChartSumLabel(curChartState, Constants.KCYN).chartLabel()
+                    , RenderChartState.getChartSumLabel(curChartState, Constants.KCYN).chartLabel()
                     , RenderValue(baseValue).getLabel()
                     , RenderValue(baseValue).getPercentLabel()
                     , RenderValue(baseValue).getStimLabel()
                 )
+
+                returnString = summaryDataLine.toKString().padEnd(122, ' ')
             }
             (renderIdx == baseRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
                 val refBaseValue = refNatalChart.getBaseValue()
 
                 snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).chartLabel()
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).chartLabel()
                     , RenderValue(refBaseValue).getLabel()
                     , RenderValue(refBaseValue).getPercentLabel()
                     , RenderValue(refBaseValue).getStimLabel()
                 )
+
+                returnString = summaryDataLine.toKString().padEnd(122, ' ')
             }
             (renderIdx == baseSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
                 val synBaseValue = synNatalChart.getBaseValue()
 
                 snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).chartLabel()
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).chartLabel()
                     , RenderValue(synBaseValue).getLabel()
                     , RenderValue(synBaseValue).getPercentLabel()
                     , RenderValue(synBaseValue).getStimLabel()
                 )
+
+                returnString = summaryDataLine.toKString().padEnd(122, ' ')
             }
         //improvement
             (renderIdx == impRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
 
                 snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).impChartLabel()
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).impChartLabel()
                     , RenderChartState.getChartImpLabel(curChart, refNatalChart)
                     , RenderChartState.getChartImpPercentLabel(curChart, refNatalChart)
                     , RenderChartState.getChartImpStimLabel(curChart, refNatalChart)
                 )
+
+                returnString = summaryDataLine.toKString().padEnd(110, ' ')
             }
             (renderIdx == impSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
 
                 snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
-                    , RenderChartState.getRenderChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).impChartLabel()
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).impChartLabel()
                     , RenderChartState.getChartImpLabel(curChart, synNatalChart)
                     , RenderChartState.getChartImpPercentLabel(curChart, synNatalChart)
                     , RenderChartState.getChartImpStimLabel(curChart, synNatalChart)
                 )
+
+                returnString = summaryDataLine.toKString().padEnd(110, ' ')
             }
-            else ->
+            else -> {
                 snprintf(summaryDataLine, summaryDataLineSize.value,"%s%*s"
                     , getSummaryColBorderShape(renderIdx)
                     , curSummaryColumnWidth, "")
+
+                returnString = summaryDataLine.toKString()
+            }
         }
 
-        return summaryDataLine.toKString()
+        return returnString
     }
 
     fun getSummaryRowBorderShape(idx : Int) : String {

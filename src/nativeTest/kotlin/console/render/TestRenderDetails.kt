@@ -139,6 +139,73 @@ object TestRenderDetails {
             val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
 
         }
+    }
 
+    @Test
+    fun testProfileCharacterDetailsComp() {
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+        val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_2)
+
+        val refNatalChart = StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synNatalChart = StateChart(synProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val compChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT)
+
+        val valueChart = ValueChart(ChartState.COMPOSITE_CHART, synChart, compChart, refNatalChart, synNatalChart)
+
+        println("character analysis details (comp):")
+        (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
+            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, valueChart)
+            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, valueChart)
+            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, valueChart)
+            println(summaryDataLineFirstCol + "|" + summaryDataLineFirstCol.length
+                    + summaryDataLineSecondCol + "|" + summaryDataLineSecondCol.length
+                    + summaryDataLineThirdCol + "|" + summaryDataLineThirdCol.length)
+            val renderIdxFirstCol = idx
+            val renderIdxSecondCol = renderIdxFirstCol + RenderDetails.detailsFirstColMaxIdx - 1
+            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
+
+        }
+    }
+
+    @Test
+    fun testProfileCharacterDetailsSyn() {
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+        val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_2)
+
+        val refNatalChart = StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synNatalChart = StateChart(synProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val compChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
+            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT)
+
+        val valueChart = ValueChart(ChartState.SYNASTRY_CHART, synChart, compChart, refNatalChart, synNatalChart)
+
+        println("character analysis details (syn):")
+        (0 until RenderConsole.detailsRenderMaxIdx).forEach { idx ->
+            val summaryDataLineFirstCol = RenderDetails.prepareDetailsDataFirstCol(idx, valueChart)
+            val summaryDataLineSecondCol = RenderDetails.prepareDetailsDataSecondCol(idx, valueChart)
+            val summaryDataLineThirdCol = RenderDetails.prepareDetailsDataThirdCol(idx, valueChart)
+            println(summaryDataLineFirstCol + "|" + summaryDataLineFirstCol.length
+                    + summaryDataLineSecondCol + "|" + summaryDataLineSecondCol.length
+                    + summaryDataLineThirdCol + "|" + summaryDataLineThirdCol.length)
+            val renderIdxFirstCol = idx
+            val renderIdxSecondCol = renderIdxFirstCol + RenderDetails.detailsFirstColMaxIdx - 1
+            val renderIdxThirdCol = renderIdxSecondCol + RenderConsole.detailsRenderMaxIdx - 1
+
+        }
     }
 }

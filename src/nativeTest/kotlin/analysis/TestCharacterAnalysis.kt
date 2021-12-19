@@ -6,6 +6,8 @@ import astro.state.*
 import astro.state.StateBaseAspect.Companion.stateBaseAspects
 import astro.value.ValueAspect
 import astro.value.ValueAspect.Companion.stateAspectReduceBase
+import astro.value.ValueChart
+import console.render.RenderDetails.getDetailMod
 import profile.base.Profiles
 import kotlin.test.Test
 
@@ -117,4 +119,45 @@ class TestCharacterAnalysis {
         println("compatibility: ${RenderValue(sharedAspects.stateAspectReduceBase()).getLabel()}")
 
     }
+
+    @Test
+    fun testCompareSynastryValueChart() {
+        val refNatalChart = StateChart(refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synNatalChart = StateChart(synProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT)
+
+        val compChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val valueChart = ValueChart(synChart.chartState, synChart, compChart, refNatalChart, synNatalChart)
+
+        println("character analysis synastry value chart")
+        valueChart.getValueAspects().forEach { println(RenderAspect(it).getRenderLabel() + ":" + RenderAspect(it).getRenderCharacterModLabel()) }
+    }
+
+    @Test
+    fun testCompareCompositeValueChart() {
+        val refNatalChart = StateChart(refProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synNatalChart = StateChart(synProfile.celestialSnapshot, ChartState.NATAL_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val synChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT)
+
+        val compChart = StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT)
+
+        val valueChart = ValueChart(compChart.chartState, synChart, compChart, refNatalChart, synNatalChart)
+
+        println("character analysis composite value chart")
+        valueChart.getValueAspects().forEach { println(RenderAspect(it).getRenderLabel() + ":" + RenderAspect(it).getRenderCharacterModLabel()) }
+    }
+
 }

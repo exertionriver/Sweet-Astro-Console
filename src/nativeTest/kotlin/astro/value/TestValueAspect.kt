@@ -51,7 +51,7 @@ object TestValueAspect {
     @Test
     fun testValueAspectsAnalysis() {
 
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_2)
         val refCelestialAspectMap = refProfile.celestialSnapshot.getAspectCelestialLongitudeMap()
 
         refCelestialAspectMap.entries.forEach {
