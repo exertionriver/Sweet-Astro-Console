@@ -8,6 +8,7 @@ import astro.render.RenderValue.Companion.neutralLabel
 import astro.render.RenderValue.Companion.positiveLabel
 import astro.state.AnalysisState
 import astro.value.ValueAspect
+import console.render.RenderDetails
 import kotlin.math.abs
 
 data class RenderAspect(val valueAspect : ValueAspect) {
@@ -15,7 +16,7 @@ data class RenderAspect(val valueAspect : ValueAspect) {
     val stateAspect = valueAspect.stateAspect
 
     fun getAspectRenderLabel() = when {
-        (valueAspect.analysisState == AnalysisState.NO_ANALYSIS) -> when {
+        (valueAspect.analysisState != AnalysisState.ROMANTIC_ANALYSIS) -> when {
             (valueAspect.getPositiveBaseValue() > 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().positiveLabel()
             (valueAspect.getNegativeBaseValue() < 0) -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().negativeLabel()
             else -> RenderAspectType.fromName(stateAspect.aspectAngle.getAspectType().toString())!!.getLabel().neutralLabel()
@@ -31,7 +32,7 @@ data class RenderAspect(val valueAspect : ValueAspect) {
     }
 
     fun getAspectValueRenderLabel() = when {
-        (valueAspect.analysisState == AnalysisState.NO_ANALYSIS) -> when {
+        (valueAspect.analysisState != AnalysisState.ROMANTIC_ANALYSIS) -> when {
             (valueAspect.getPositiveBaseValue() > 0) -> valueAspect.getPositiveBaseValue().toString().padStart(3, ' ').positiveLabel()
             (valueAspect.getNegativeBaseValue() < 0) -> (-valueAspect.getNegativeBaseValue()).toString().padStart(3, ' ').negativeLabel()
             else -> "0".padStart(3, ' ').neutralLabel()
@@ -62,25 +63,25 @@ data class RenderAspect(val valueAspect : ValueAspect) {
    }
 
     fun getRenderRomanticModLabel() : String {
-        if (valueAspect.analysisState != AnalysisState.ROMANTIC_ANALYSIS) return Constants.KMAG + "(**)"
+        if (valueAspect.analysisState != AnalysisState.ROMANTIC_ANALYSIS) return Constants.KNRM + ":" + Constants.KMAG + "(**) "
 
         return when {
             (valueAspect.getAspectModifier() > 0) -> when {
-                (valueAspect.getAspectModifier() == 4) -> Constants.KBBLU + "(+4)"
-                else -> Constants.KGRN + "(+${valueAspect.getAspectModifier()})"
+                (valueAspect.getAspectModifier() == 4) -> Constants.KNRM + ":" + Constants.KBBLU + "(+4) "
+                else -> Constants.KNRM + ":" + Constants.KGRN + "(+${valueAspect.getAspectModifier()}) "
             }
             (valueAspect.getAspectModifier() < 0) -> when {
-                (valueAspect.getAspectModifier() == -4) -> Constants.KBRED + "(-4)"
-                else -> Constants.KRED + "(${valueAspect.getAspectModifier()})"
+                (valueAspect.getAspectModifier() == -4) -> Constants.KNRM + ":" + Constants.KBRED + "(-4) "
+                else -> Constants.KNRM + ":" + Constants.KRED + "(${valueAspect.getAspectModifier()}) "
             }
-            else -> LABEL_SPACE.padStart(4, ' ')
+            else -> LABEL_SPACE.padStart(RenderDetails.getModWidth(), ' ')
         } + Constants.KNRM
     }
 
     fun getRenderCharacterModLabel() : String {
-        if (valueAspect.analysisState != AnalysisState.CHARACTER_ANALYSIS) return Constants.KMAG + "(**)"
+        if (valueAspect.analysisState != AnalysisState.CHARACTER_ANALYSIS) return Constants.KNRM + ":" + Constants.KMAG + "(**)"
 
-        return getChartStateTypesLabel(valueAspect.getAspectModifier()).padStart(4, ' ')
+        return getChartStateTypesLabel(valueAspect.getAspectModifier()).padStart(RenderDetails.getModWidth(), ' ')
     }
 
     companion object {

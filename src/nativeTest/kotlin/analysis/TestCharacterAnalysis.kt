@@ -5,9 +5,8 @@ import astro.render.RenderValue
 import astro.state.*
 import astro.state.StateBaseAspect.Companion.stateBaseAspects
 import astro.value.ValueAspect
-import astro.value.ValueAspect.Companion.stateAspectReduceBase
+import astro.state.StateAspect.Companion.stateAspectReduceBase
 import astro.value.ValueChart
-import console.render.RenderDetails.getDetailMod
 import profile.base.Profiles
 import kotlin.test.Test
 

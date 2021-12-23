@@ -8,6 +8,11 @@ import kotlin.test.assertEquals
 
 object TestRenderSummary {
 
+    val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+    val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_2)
+    val timeAspectsState = TimeAspectsState.TIME_ASPECTS_ENABLED
+    val analysisState = AnalysisState.ROMANTIC_ANALYSIS
+
     @Test
     fun testBorderShapes() {
 
@@ -27,10 +32,9 @@ object TestRenderSummary {
 
     @Test
     fun testNatalSummary() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         val vertShapeMaxIdx = 3
 
@@ -49,10 +53,9 @@ object TestRenderSummary {
 
     @Test
     fun testNatalSummaryAgainstDetails() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         assertEquals(refNatalChart.getBaseValue().positive, refNatalChart.getValueAspects().map { it.getBaseValue().positive }.reduce { acc, basePositive -> acc + basePositive })
         assertEquals(refNatalChart.getBaseValue().negative, refNatalChart.getValueAspects().map { it.getBaseValue().negative }.reduce { acc, baseNegative -> acc + baseNegative })
@@ -67,17 +70,15 @@ object TestRenderSummary {
 
     @Test
     fun testCompSummary() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
-        val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val compChart = ValueChart(StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         val synNatalChart = ValueChart(StateChart(synProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         (0..20).forEach { idx ->
             val summaryDataLine = RenderSummary.prepareSummaryData(idx, compChart, refNatalChart, synNatalChart, ChartState.COMPOSITE_CHART)
@@ -95,10 +96,9 @@ object TestRenderSummary {
 
     @Test
     fun testCompSummaryAgainstDetails() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
 
         val refCompChart = ValueChart(StateChart(refProfile.celestialSnapshot, refProfile.celestialSnapshot, ChartState.COMPOSITE_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         assertEquals(refCompChart.getBaseValue().positive, refCompChart.getValueAspects().map { it.getBaseValue().positive }.reduce { acc, basePositive -> acc + basePositive })
         assertEquals(refCompChart.getBaseValue().negative, refCompChart.getValueAspects().map { it.getBaseValue().negative }.reduce { acc, baseNegative -> acc + baseNegative })
@@ -113,21 +113,19 @@ object TestRenderSummary {
 
     @Test
     fun testSynSummary() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
-        val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val synChart = ValueChart(StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT), analysisState)
 
         println(synChart.getValueAspects().size)
 
         val refNatalChart = ValueChart(StateChart(refProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         println(refNatalChart.getValueAspects().size)
 
         val synNatalChart = ValueChart(StateChart(synProfile.celestialSnapshot, ChartState.NATAL_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_NATCOMP_OVERLAY_DEFAULT), analysisState)
 
         println(synNatalChart.getValueAspects().size)
 
@@ -149,11 +147,9 @@ object TestRenderSummary {
 
     @Test
     fun testSynSummaryAgainstDetails() {
-        val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_CUR_NAV)
-        val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
 
         val synChart = ValueChart(StateChart(refProfile.celestialSnapshot, synProfile.celestialSnapshot, ChartState.SYNASTRY_CHART,
-            AspectsState.ALL_ASPECTS, TimeAspectsState.TIME_ASPECTS_ENABLED, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT), AnalysisState.NO_ANALYSIS)
+            AspectsState.ALL_ASPECTS, timeAspectsState, AspectOverlayState.ASPECT_SYNASTRY_OVERLAY_DEFAULT), analysisState)
 
         assertEquals(synChart.getBaseValue().positive, synChart.getValueAspects().map { it.getBaseValue().positive }.reduce { acc, basePositive -> acc + basePositive })
         assertEquals(synChart.getBaseValue().negative, synChart.getValueAspects().map { it.getBaseValue().negative }.reduce { acc, baseNegative -> acc + baseNegative })

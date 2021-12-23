@@ -3,12 +3,17 @@ package astro.value
 import astro.base.*
 import astro.state.AnalysisState
 import astro.state.ChartState
+import astro.state.ChartStateType
+import astro.state.ChartStateType.Companion.decodeChartStateType
 import astro.state.StateAspect
 import astro.value.ValueAspect.Companion.valueAspectReduceBase
 
 import kotlin.math.abs
 
-data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS, val characterModifier: Int = 0) {
+//fourth chart aspects are for the opposite of current chartType for compSyn charts
+//if chartState == SYNASTRY_CHART, fourth chart aspects are aspects that the composite chart shares with the natal charts
+//if chartState == COMPOSITE_CHART, fourth chart aspects are aspects that the synastry chart shares with the natal charts
+data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartState = ChartState.NATAL_CHART, val analysisState: AnalysisState = AnalysisState.NO_ANALYSIS, val characterModifier: Int = 0, val fourthChartAspect: Boolean = false) {
 
     val baseValue = getAspectBaseValue()
 
@@ -96,6 +101,8 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
         var modPos = 0
 
+        if (analysisState == AnalysisState.CHARACTER_ANALYSIS) return modPos
+
         modPos += when {
             (getAspectModifier() > 0) -> (getBaseValue().positive * abs(getAspectModifier()) * .25).toInt()
             (getAspectModifier() < 0) -> (getBaseValue().positive * -abs(getAspectModifier()) * .25).toInt()
@@ -141,6 +148,8 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
     fun getNegativeModValue() : Int {
 
         var modNeg = 0
+
+        if (analysisState == AnalysisState.CHARACTER_ANALYSIS) return modNeg
 
         modNeg += when {
             (getAspectModifier() > 0) -> (getBaseValue().negative * -abs(getAspectModifier()) * .25).toInt()
@@ -252,20 +261,11 @@ data class ValueAspect (val stateAspect : StateAspect, val chartState: ChartStat
 
             return Value(pos, neg)
         }
+/*
+        fun List<ValueAspect>.getCharacterValue(curChart : ValueChart, chartValueType : ChartValueType) : Value {
 
-        fun List<StateAspect>.stateAspectReduceBase(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
-            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveBaseValue() }
-            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeBaseValue() }
-
-            return Value(pos, neg)
+            return this.filter { it.getAspectModifier().decodeChartStateType().contains(chartStateType) }.valueAspectReduceBaseModNet()
         }
-
-        fun List<StateAspect>.stateAspectReduceMod(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
-            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveModValue() }
-            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeModValue() }
-
-            return Value(pos, neg)
-        }
+*/
     }
-
 }

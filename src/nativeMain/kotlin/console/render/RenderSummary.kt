@@ -3,8 +3,14 @@ package console.render
 import astro.render.RenderChartState
 import astro.render.RenderChartState.chartLabel
 import astro.render.RenderChartState.impChartLabel
+import astro.render.RenderChartState.impRomChartLabel
+import astro.render.RenderChartState.romChartLabel
 import astro.render.RenderValue
+import astro.state.AnalysisState
 import astro.state.ChartState
+import astro.value.Value
+import astro.value.ValueAspect
+import astro.value.ValueAspect.Companion.valueAspectReduceBaseModNet
 import astro.value.ValueChart
 import kotlinx.cinterop.*
 import platform.posix.printf
@@ -27,6 +33,13 @@ object RenderSummary {
 
     val impRomRefNatalChartSummaryIdx = 12
     val impRomSynNatalChartSummaryIdx = 13
+
+    val characterNatalsIdx = 8
+    val characterCompositeIdx = 9
+    val characterSynastryIdx = 10
+    val characterCompSynIdx = 11
+
+    val renderMaxIdx = 19
 
     fun renderSummaryData(renderIdx: Int, curChart: ValueChart, refNatalChart: ValueChart, synNatalChart: ValueChart, curChartState : ChartState) {
 
@@ -55,7 +68,7 @@ object RenderSummary {
             (renderIdx == baseCurChartSummaryIdx) -> {
                 val baseValue = curChart.getBaseValue()
 
-                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s%s %s %s"
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s  %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
                     , RenderChartState.getChartSumLabel(curChartState, Constants.KCYN).chartLabel()
                     , RenderValue(baseValue).getLabel()
@@ -68,7 +81,7 @@ object RenderSummary {
             (renderIdx == baseRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
                 val refBaseValue = refNatalChart.getBaseValue()
 
-                snprintf(summaryDataLine, summaryDataLineSize.value,"%s %s%s %s %s"
+                snprintf(summaryDataLine, summaryDataLineSize.value,"%s  %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
                     , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).chartLabel()
                     , RenderValue(refBaseValue).getLabel()
@@ -81,7 +94,7 @@ object RenderSummary {
             (renderIdx == baseSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
                 val synBaseValue = synNatalChart.getBaseValue()
 
-                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s  %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
                     , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).chartLabel()
                     , RenderValue(synBaseValue).getLabel()
@@ -94,28 +107,117 @@ object RenderSummary {
         //improvement
             (renderIdx == impRefNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
 
-                snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
                     , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).impChartLabel()
-                    , RenderChartState.getChartImpLabel(curChart, refNatalChart)
-                    , RenderChartState.getChartImpPercentLabel(curChart, refNatalChart)
-                    , RenderChartState.getChartImpStimLabel(curChart, refNatalChart)
+                    , RenderChartState.getChartImpLabel(curChart.getBaseValue(), refNatalChart.getBaseValue())
+                    , RenderChartState.getChartImpPercentLabel(curChart.getBaseValue(), refNatalChart.getBaseValue())
+                    , RenderChartState.getChartImpStimLabel(curChart.getBaseValue(), refNatalChart.getBaseValue())
                 )
 
                 returnString = summaryDataLine.toKString().padEnd(110, ' ')
             }
             (renderIdx == impSynNatalChartSummaryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
 
-                snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
                     , getSummaryColBorderShape(renderIdx)
                     , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).impChartLabel()
-                    , RenderChartState.getChartImpLabel(curChart, synNatalChart)
-                    , RenderChartState.getChartImpPercentLabel(curChart, synNatalChart)
-                    , RenderChartState.getChartImpStimLabel(curChart, synNatalChart)
+                    , RenderChartState.getChartImpLabel(curChart.getBaseValue(), synNatalChart.getBaseValue())
+                    , RenderChartState.getChartImpPercentLabel(curChart.getBaseValue(), synNatalChart.getBaseValue())
+                    , RenderChartState.getChartImpStimLabel(curChart.getBaseValue(), synNatalChart.getBaseValue())
                 )
 
                 returnString = summaryDataLine.toKString().padEnd(110, ' ')
             }
+
+            (renderIdx == romCurChartSummaryIdx) && (curChart.analysisState == AnalysisState.ROMANTIC_ANALYSIS) -> {
+                val romValue = curChart.getValueAspects().valueAspectReduceBaseModNet()
+
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KCYN).romChartLabel()
+                    , RenderValue(romValue).getLabel()
+                    , RenderValue(romValue).getPercentLabel()
+                    , RenderValue(romValue).getStimLabel()
+
+                )
+
+                returnString = summaryDataLine.toKString().padEnd(118, ' ')
+            }
+
+            (renderIdx == romRefNatalChartSummaryIdx) && (curChart.analysisState == AnalysisState.ROMANTIC_ANALYSIS) && (curChartState != ChartState.NATAL_CHART) -> {
+                val refRomValue = refNatalChart.getValueAspects().valueAspectReduceBaseModNet()
+
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).romChartLabel()
+                    , RenderValue(refRomValue).getLabel()
+                    , RenderValue(refRomValue).getPercentLabel()
+                    , RenderValue(refRomValue).getStimLabel()
+
+                )
+
+                returnString = summaryDataLine.toKString().padEnd(118, ' ')
+            }
+
+            (renderIdx == romSynNatalChartSummaryIdx) && (curChart.analysisState == AnalysisState.ROMANTIC_ANALYSIS) && (curChartState != ChartState.NATAL_CHART) -> {
+                val synRomValue = synNatalChart.getValueAspects().valueAspectReduceBaseModNet()
+
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s %s%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).romChartLabel()
+                    , RenderValue(synRomValue).getLabel()
+                    , RenderValue(synRomValue).getPercentLabel()
+                    , RenderValue(synRomValue).getStimLabel()
+                )
+
+                returnString = summaryDataLine.toKString().padEnd(118, ' ')
+            }
+
+            (renderIdx == impRomRefNatalChartSummaryIdx) && (curChart.analysisState == AnalysisState.ROMANTIC_ANALYSIS) && (curChartState != ChartState.NATAL_CHART) -> {
+                val romValue = curChart.getValueAspects().valueAspectReduceBaseModNet()
+                val refRomValue = refNatalChart.getValueAspects().valueAspectReduceBaseModNet()
+
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KBLU).impRomChartLabel()
+                    , RenderChartState.getChartImpLabel(romValue, refRomValue)
+                    , RenderChartState.getChartImpPercentLabel(romValue, refRomValue)
+                    , RenderChartState.getChartImpStimLabel(romValue, refRomValue)
+                )
+
+                returnString = summaryDataLine.toKString().padEnd(115, ' ')
+            }
+
+            (renderIdx == impRomSynNatalChartSummaryIdx) && (curChart.analysisState == AnalysisState.ROMANTIC_ANALYSIS) && (curChartState != ChartState.NATAL_CHART) -> {
+                val romValue = curChart.getValueAspects().valueAspectReduceBaseModNet()
+                val synRomValue = synNatalChart.getValueAspects().valueAspectReduceBaseModNet()
+
+                snprintf(summaryDataLine, summaryDataLineSize.value, "%s%s%s %s %s"
+                    , getSummaryColBorderShape(renderIdx)
+                    , RenderChartState.getChartSumLabel(ChartState.NATAL_CHART, Constants.KMAG).impRomChartLabel()
+                    , RenderChartState.getChartImpLabel(romValue, synRomValue)
+                    , RenderChartState.getChartImpPercentLabel(romValue, synRomValue)
+                    , RenderChartState.getChartImpStimLabel(romValue, synRomValue)
+                )
+
+                returnString = summaryDataLine.toKString().padEnd(115, ' ')
+            }
+
+            /* TODO: implement character analysis summary
+            (renderIdx == characterNatalsIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+       //         List<ValueAspect>.getCharacterValue(chartStateType : ChartStateType) : Value
+            }
+            (renderIdx == characterCompositeIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+            }
+            (renderIdx == characterSynastryIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+            }
+            (renderIdx == characterCompSynIdx) && (curChartState != ChartState.NATAL_CHART) -> {
+
+            }
+*/
             else -> {
                 snprintf(summaryDataLine, summaryDataLineSize.value,"%s%*s"
                     , getSummaryColBorderShape(renderIdx)

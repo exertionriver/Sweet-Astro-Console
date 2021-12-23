@@ -219,13 +219,15 @@ object RenderDetails {
         }
     }
 
-    fun getDetailsColumnWidth() = RenderAspect.getLabelLength() + ":N_app".length //label plus mod length
+    fun getDetailsColumnWidth() = RenderAspect.getLabelLength() + getModWidth()
+
+    fun getModWidth() = ":N_app".length //label plus mod length
 
     fun ValueAspect.getDetailMod(analysisState: AnalysisState) : String {
         return when(analysisState) {
             AnalysisState.CHARACTER_ANALYSIS -> RenderAspect(this).getRenderCharacterModLabel()
             AnalysisState.ROMANTIC_ANALYSIS -> RenderAspect(this).getRenderRomanticModLabel()
-            else -> LABEL_SPACE.padStart(6, ' ')
+            else -> LABEL_SPACE.padStart(getModWidth(), ' ')
         }
     }
 

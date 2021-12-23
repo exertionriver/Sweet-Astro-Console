@@ -20,7 +20,7 @@ object RenderChartStateType {
 
         var counter = 0
 
-        chartStateTypes.sortedDescending().forEach {
+        chartStateTypes.sortedDescending().filter { it.ordinal <= ChartStateType.renderMaxIdx }.forEach {
             returnString += when (it) {
                 ChartStateType.REF_NATAL_CHART -> Constants.KBLU
                 ChartStateType.SYN_NATAL_CHART -> Constants.KMAG

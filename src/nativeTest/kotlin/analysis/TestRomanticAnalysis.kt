@@ -1,11 +1,7 @@
 package analysis
 
-import astro.render.RenderAspect
 import astro.render.RenderValue
 import astro.state.*
-import astro.state.StateBaseAspect.Companion.stateBaseAspects
-import astro.value.ValueAspect
-import astro.value.ValueAspect.Companion.stateAspectReduceBase
 import astro.value.ValueAspect.Companion.valueAspectReduceBase
 import astro.value.ValueAspect.Companion.valueAspectReduceBaseModNet
 import astro.value.ValueChart
@@ -15,9 +11,9 @@ import kotlin.test.Test
 @ExperimentalUnsignedTypes
 class TestRomanticAnalysis {
 
-    val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_7)
-    val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_8)
-    val timeAspectsState = TimeAspectsState.TIME_ASPECTS_DISABLED
+    val refProfile = Profiles.getDefaultProfile(Profiles.PROFILE_1)
+    val synProfile = Profiles.getDefaultProfile(Profiles.PROFILE_2)
+    val timeAspectsState = TimeAspectsState.TIME_ASPECTS_ENABLED
 
     @Test
     fun testCompareNatals() {

@@ -4,6 +4,8 @@ import astro.base.Aspect
 import astro.base.AspectAngle
 import astro.base.AspectCelestial
 import astro.base.Sign
+import astro.value.Value
+import astro.value.ValueAspect
 import console.state.ConsoleAspectsState
 import console.state.ConsoleAspectOverlayState
 import console.state.ConsoleTimeAspectsState
@@ -144,6 +146,20 @@ data class StateAspect(val signFirst : Sign
 
 //             println("selected aspectAngle:$returnAspectAngle, orb: $minOrb")
             return returnAspectAngle
+        }
+
+        fun List<StateAspect>.stateAspectReduceBase(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
+            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveBaseValue() }
+            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeBaseValue() }
+
+            return Value(pos, neg)
+        }
+
+        fun List<StateAspect>.stateAspectReduceMod(chartState: ChartState = ChartState.NATAL_CHART, analysisState: AnalysisState = AnalysisState.NO_ANALYSIS) : Value {
+            val pos = this.sumOf { ValueAspect(it, chartState, analysisState).getPositiveModValue() }
+            val neg = this.sumOf { ValueAspect(it, chartState, analysisState).getNegativeModValue() }
+
+            return Value(pos, neg)
         }
     }
 }

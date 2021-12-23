@@ -61,32 +61,92 @@ class ValueChart (val chartRows: Array<ValueChartRow>, val analysisState: Analys
 
             if (chartState == ChartState.COMPOSITE_CHART) {
                 val synBaseAspects = synAspects.stateBaseAspects()
+                val synSharedAspects = mutableListOf<StateBaseAspect>()
 
                 compAspects.forEach {
                     val baseAspect = it.getStateBaseAspect()
 
                     val commonAspectCharts = mutableListOf<ChartStateType>()
 
-                    if ( synBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYNASTRY_CHART)
-                    if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
-                    if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+/*                    when {
+                        refNatalBaseAspects.contains(baseAspect) && synBaseAspects.contains(baseAspect) -> {
+                            commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+//                            commonAspectCharts.add(ChartStateType.REF_NATAL_OPP_CHART)
+                            synSharedAspects.add(baseAspect)
+                        }
+                        synNatalBaseAspects.contains(baseAspect) && synBaseAspects.contains(baseAspect) -> {
+                            commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+//                            commonAspectCharts.add(ChartStateType.SYN_NATAL_OPP_CHART)
+                            synSharedAspects.add(baseAspect)
+                        }
+*/
+                    if (refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+                    if (synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+                    if (synBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYNASTRY_CHART)
 
-                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType())) }
+                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType()))
+                }
 
+/* TODO: implement fourth chart rendering for character analysis
+
+                synAspects.forEach {
+                    val baseAspect = it.getStateBaseAspect()
+
+                    if ( !synSharedAspects.contains(baseAspect) ) {
+
+                        val commonAspectCharts = mutableListOf<ChartStateType>()
+
+                        if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_OPP_CHART)
+                        if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_OPP_CHART)
+
+                        returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType()))
+                    }
+                }
+*/
             } else { // (chartState == ChartState.SYNASTRY_CHART)
                 val compBaseAspects = compAspects.stateBaseAspects()
+                val compSharedAspects = mutableListOf<StateBaseAspect>()
 
                 synAspects.forEach {
                     val baseAspect = it.getStateBaseAspect()
 
                     val commonAspectCharts = mutableListOf<ChartStateType>()
 
-                    if ( compBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.COMPOSITE_CHART)
-                    if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
-                    if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+/*                    when {
+                        refNatalBaseAspects.contains(baseAspect) && compBaseAspects.contains(baseAspect) -> {
+                            commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+//                            commonAspectCharts.add(ChartStateType.REF_NATAL_OPP_CHART)
+                            compSharedAspects.add(baseAspect)
+                        }
+                        synNatalBaseAspects.contains(baseAspect) && compBaseAspects.contains(baseAspect) -> {
+                            commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+//                            commonAspectCharts.add(ChartStateType.SYN_NATAL_OPP_CHART)
+                            compSharedAspects.add(baseAspect)
+                        }
+*/
+                    if (refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_CHART)
+                    if (synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_CHART)
+                    if (compBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.COMPOSITE_CHART)
 
-                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType())) }
-            }
+                    returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType()))
+                }
+
+/* TODO: implement fourth chart rendering for character analysis
+
+                compAspects.forEach {
+                    val baseAspect = it.getStateBaseAspect()
+
+                    if ( !compSharedAspects.contains(baseAspect) ) {
+
+                        val commonAspectCharts = mutableListOf<ChartStateType>()
+
+                        if ( refNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.REF_NATAL_OPP_CHART)
+                        if ( synNatalBaseAspects.contains(baseAspect) ) commonAspectCharts.add(ChartStateType.SYN_NATAL_OPP_CHART)
+
+                        returnAspects.add(ValueAspect(it, chartState, AnalysisState.CHARACTER_ANALYSIS, commonAspectCharts.encodeChartStateType()))
+                    }
+                }
+*/            }
 
             return returnAspects.toTypedArray()
         }
