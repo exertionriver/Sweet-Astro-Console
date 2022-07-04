@@ -9,3 +9,4 @@
 *.hprof
 /notes/**
 /.git_old/**
+/local.properties
