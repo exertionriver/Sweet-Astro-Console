@@ -1,0 +1,7 @@
+/.gradle/**
+/.idea/**
+/desktop/build/**
+/core/build/**
+/android/build/**
+/notes/**
+local.properties
